@@ -1,0 +1,19 @@
+version: "3"
+
+# More info at https://github.com/homebridge/homebridge/wiki/Install-Homebridge-on-Docker and https://github.com/oznu/docker-homebridge
+services:
+  homebridge:
+    container_name: homebridge
+    image: oznu/homebridge:latest
+    network_mode: host
+    environment:
+      TZ: "America/Vancouver"
+    volumes:
+      - "${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/homebridge:/homebridge"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10mb"
+        max-file: "1"
+    restart: unless-stopped
+
