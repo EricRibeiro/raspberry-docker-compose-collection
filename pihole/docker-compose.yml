@@ -11,6 +11,8 @@ services:
       - "53:53/tcp"
       - "53:53/udp"
       - "80:80/tcp"
+    dns:
+      - 127.0.0.1
     environment:
       TZ: 'America/Vancouver'
       WEBPASSWORD: ''
