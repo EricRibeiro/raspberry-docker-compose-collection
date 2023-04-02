@@ -1,0 +1,22 @@
+version: "3"
+
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+# This file doesn't support DHCP as it is. Read the "Quick Start" to see what is required.
+# For more info on  DHCP and network modes: https://docs.pi-hole.net/docker/dhcp/
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "80:80/tcp"
+    environment:
+      TZ: 'America/Vancouver'
+      WEBPASSWORD: ''
+      FTLCONF_LOCAL_IPV4: '192.168.1.225' # replace with host's IP address.
+      DNSMASQ_LISTENING: 'all'
+    volumes:
+      - '${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/pihole/data:/etc/pihole'
+      - '${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/pihole/dnsmasq:/etc/dnsmasq.d'
+    restart: unless-stopped
