@@ -1,48 +1,65 @@
-version: '3.3'
+version: '3'
 
+# More info at https://docs.technotim.live/posts/traefik-portainer-ssl/ and https://www.youtube.com/watch?v=liV3c9m_OX8
 services:
-  reverse-proxy:
-    container_name: traefik-reverse-proxy
-    image: traefik:v2.9
-    command:
-      - "--log.level=DEBUG"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      # - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
     ports:
-      - "80:80"
-      - "443:443"
-      - "8080:8080"
+      - 80:80
+      - 443:443
+    env_file:
+      - cloudflare.env
+      - traefik.env
+    environment:
+      - CF_API_EMAIL=ericribeiro@outlook.com.br
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - "${DOCKER_VOLUME_TRAEFIK:-/mnt/docker-volumes/traefik}/acme.json:/etc/traefik/acme/acme.json"
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/traefik/:/etc/traefik
     labels:
-      # Dashboard
-      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.pi.localhost`)"
-      - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.enable=true"
 
-      # Global redirect to https
-      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
-      - "traefik.http.routers.http-catchall.entrypoints=web"
-      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
-      - "traefik.http.routers.traefik.tls=true"
+      # Dashboard
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.pi.yetanother.ca`)"
+      - "traefik.http.routers.traefik-secure.service=api@internal"
+      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.traefik-secure.entrypoints=https"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.pi.yetanother.ca`)"
+      - "traefik.http.routers.traefik.entrypoints=http"
+      # - "traefik.http.routers.traefik-secure.middlewares=traefik-auth" # Uncomment to require auth to access Dashboard.
+      # - "traefik.http.middlewares.traefik-auth.basicauth.users=$USER:$BASIC_AUTH_PASSWORD" # Uncomment to require auth to access Dashboard.
+
+      # TLS
+      - "traefik.http.routers.traefik-secure.tls=true"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].main=pi.yetanother.ca"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.pi.yetanother.ca"
 
       # Middleware redirect
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-    restart: unless-stopped
+      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
+      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
 
   whoami:
     # A container that exposes an API to show its IP address
     image: traefik/whoami:v1.9
-    container_name: traefik-whoami
+    container_name: whoami
     command:
       - --port=41234
     labels:
       - "traefik.http.services.whoami.loadbalancer.server.port=41234"
       - "traefik.http.routers.whoami.tls=true"
       - "traefik.http.routers.whoami.entrypoints=websecure"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.pi.yetanother.ca`)"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    name: proxy
+    driver: bridge
