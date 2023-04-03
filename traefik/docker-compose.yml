@@ -1,0 +1,48 @@
+version: '3.3'
+
+services:
+  reverse-proxy:
+    container_name: traefik-reverse-proxy
+    image: traefik:v2.9
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      # - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "${DOCKER_VOLUME_TRAEFIK:-/mnt/docker-volumes/traefik}/acme.json:/etc/traefik/acme/acme.json"
+    labels:
+      # Dashboard
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.pi.localhost`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+
+      # Global redirect to https
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.routers.traefik.tls=true"
+
+      # Middleware redirect
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+    restart: unless-stopped
+
+  whoami:
+    # A container that exposes an API to show its IP address
+    image: traefik/whoami:v1.9
+    container_name: traefik-whoami
+    command:
+      - --port=41234
+    labels:
+      - "traefik.http.services.whoami.loadbalancer.server.port=41234"
+      - "traefik.http.routers.whoami.tls=true"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
