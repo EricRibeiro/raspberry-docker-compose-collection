@@ -124,7 +124,7 @@ function main {
   local -r acme_file_name="acme.json"
   prepare_dir "$docker_volume_traefik" "$acme_file_name" "$should_skip_ACME" || { err_code="$?"; printf '%s\n' "Something went wrong while prepating the docker volume directory"; return "$err_code"; }
   
-  local -r cloudflare_env_file="cloudflare.env"
+  local -r cloudflare_env_file=".env"
   local -r traefik_yaml_file="$DOCKER_VOLUME_TRAEFIK/traefik.yml"
   local -r email_var_in_env_file="CF_API_EMAIL"
   local -r email_var_in_yaml_file="\$CF_API_EMAIL"
