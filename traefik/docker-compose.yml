@@ -52,10 +52,17 @@ services:
     command:
       - --port=41234
     labels:
-      - "traefik.http.services.whoami.loadbalancer.server.port=41234"
-      - "traefik.http.routers.whoami.tls=true"
-      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.entrypoints=http"
       - "traefik.http.routers.whoami.rule=Host(`whoami.pi.yetanother.ca`)"
+      - "traefik.http.middlewares.whoami-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.whoami.middlewares=whoami-https-redirect"
+      - "traefik.http.routers.whoami-secure.entrypoints=https"
+      - "traefik.http.routers.whoami-secure.rule=Host(`whoami.pi.yetanother.ca`)"
+      - "traefik.http.routers.whoami-secure.tls=true"
+      - "traefik.http.routers.whoami-secure.service=whoami"
+      - "traefik.http.services.whoami.loadbalancer.server.port=41234"
+      - "traefik.docker.network=proxy"
     networks:
       - proxy
 

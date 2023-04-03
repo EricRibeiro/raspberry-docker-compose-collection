@@ -1,10 +1,19 @@
 http:
  #region routers 
   routers:
+    whoami:
+      entryPoints:
+        - "https"
+      rule: "Host(`whoami.pi.yetanother.ca`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: whoami
     pihole:
       entryPoints:
         - "https"
-      rule: "Host(`pihole.local.example.com`)"
+      rule: "Host(`pihole.pi.yetanother.ca`)"
       middlewares:
         - default-headers
         - addprefix-pihole
@@ -14,7 +23,7 @@ http:
     homebridge:
       entryPoints:
         - "https"
-      rule: "Host(`homebridge.local.example.com`)"
+      rule: "Host(`homebridge.lpi.yetanother.ca`)"
       middlewares:
         - default-headers
         - https-redirectscheme
