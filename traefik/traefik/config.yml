@@ -4,7 +4,7 @@ http:
     whoami:
       entryPoints:
         - "https"
-      rule: "Host(`whoami.pi.yetanother.ca`)"
+      rule: "Host(`whoami.serverly.ca`)"
       middlewares:
         - default-headers
         - https-redirectscheme
@@ -13,7 +13,7 @@ http:
     pihole:
       entryPoints:
         - "https"
-      rule: "Host(`pihole.pi.yetanother.ca`)"
+      rule: "Host(`pihole.serverly.ca`)"
       middlewares:
         - default-headers
         - addprefix-pihole
@@ -23,7 +23,7 @@ http:
     homebridge:
       entryPoints:
         - "https"
-      rule: "Host(`homebridge.lpi.yetanother.ca`)"
+      rule: "Host(`homebridge.serverly.ca`)"
       middlewares:
         - default-headers
         - https-redirectscheme

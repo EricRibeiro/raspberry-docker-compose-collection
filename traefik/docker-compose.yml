@@ -26,19 +26,19 @@ services:
       - "traefik.enable=true"
 
       # Dashboard
-      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.pi.yetanother.ca`)"
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.serverly.ca`)"
       - "traefik.http.routers.traefik-secure.service=api@internal"
       - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
       - "traefik.http.routers.traefik-secure.entrypoints=https"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.pi.yetanother.ca`)"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.serverly.ca`)"
       - "traefik.http.routers.traefik.entrypoints=http"
       # - "traefik.http.routers.traefik-secure.middlewares=traefik-auth" # Uncomment to require auth to access Dashboard.
       # - "traefik.http.middlewares.traefik-auth.basicauth.users=$USER:$BASIC_AUTH_PASSWORD" # Uncomment to require auth to access Dashboard.
 
       # TLS
       - "traefik.http.routers.traefik-secure.tls=true"
-      - "traefik.http.routers.traefik-secure.tls.domains[0].main=pi.yetanother.ca"
-      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.pi.yetanother.ca"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].main=serverly.ca"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.serverly.ca"
 
       # Middleware redirect
       - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
@@ -54,15 +54,14 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.whoami.entrypoints=http"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.pi.yetanother.ca`)"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.serverly.ca`)"
       - "traefik.http.middlewares.whoami-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.routers.whoami.middlewares=whoami-https-redirect"
       - "traefik.http.routers.whoami-secure.entrypoints=https"
-      - "traefik.http.routers.whoami-secure.rule=Host(`whoami.pi.yetanother.ca`)"
+      - "traefik.http.routers.whoami-secure.rule=Host(`whoami.serverly.ca`)"
       - "traefik.http.routers.whoami-secure.tls=true"
       - "traefik.http.routers.whoami-secure.service=whoami"
       - "traefik.http.services.whoami.loadbalancer.server.port=41234"
-      - "traefik.docker.network=proxy"
     networks:
       - proxy
 

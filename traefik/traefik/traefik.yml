@@ -1,5 +1,5 @@
-log:
-  level: DEBUG
+# log:
+#   level: DEBUG
 api:
   dashboard: true
   debug: true
@@ -24,8 +24,8 @@ providers:
 certificatesResolvers:
   cloudflare:
     acme:
-      caServer: https://acme-staging-v02.api.letsencrypt.org/directory # Testing server. Uncomment this for testing as the API limit is higher.
-      # caServer: https://acme-v02.api.letsencrypt.org/directory # Production server. Unconmment this once testing is done.
+      # caServer: https://acme-staging-v02.api.letsencrypt.org/directory # Testing server. Uncomment this for testing as the API limit is higher.
+      caServer: https://acme-v02.api.letsencrypt.org/directory # Production server. Unconmment this once testing is done.
       email: $CF_API_EMAIL
       storage: /etc/traefik/acme/acme.json
       dnsChallenge:
