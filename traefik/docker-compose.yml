@@ -16,8 +16,6 @@ services:
     env_file:
       - cloudflare.env
       - traefik.env
-    environment:
-      - CF_API_EMAIL=ericribeiro@outlook.com.br
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
