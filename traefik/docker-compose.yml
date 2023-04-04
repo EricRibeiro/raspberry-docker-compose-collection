@@ -14,7 +14,7 @@ services:
       - 80:80
       - 443:443
     env_file:
-      - .env
+      - traefik.env
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
