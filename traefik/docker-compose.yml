@@ -14,33 +14,54 @@ services:
       - 80:80
       - 443:443
     env_file:
-      - traefik.env
+      # The .env file is used by Docker Compose to load environment variables by default (e.g., IMAGE_TAG=latest).
+      # Having the file named .env allows automatic loading and substitution of variables in the docker-compose.yml (e.g., ${IMAGE_TAG} gets replaced with the value latest).
+      # More info at https://stackoverflow.com/a/64723777.
+      - .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/traefik/:/etc/traefik:rw
+    command:
+      - "--api.dashboard=true" # Enable the Traefik dashboard.
+      - "--certificatesResolvers.cloudflare.acme.caServer=${CA_SERVER_PRODUCTION}" # Use Let's Encrypt production or staging server. Staging has an higher API limit, use it for testing.
+      - "--certificatesResolvers.cloudflare.acme.dnsChallenge.delayBeforeCheck=20" # Delay before checking DNS records
+      - "--certificatesResolvers.cloudflare.acme.dnsChallenge.provider=cloudflare" # Use Cloudflare as DNS challenge provider
+      - "--certificatesResolvers.cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53" # Set well known DNS servers for the DNS challenge
+      - "--certificatesResolvers.cloudflare.acme.email=${CF_API_EMAIL}" # Set email for certificate resolver
+      - "--certificatesResolvers.cloudflare.acme.storage=/etc/traefik/acme/acme.json" # Set storage for certificate resolver
+      - "--entrypoints.web.address=:80" # Define "web" entry point listening on port 80
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https" # Use HTTPS for the redirection
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure" # Redirect "web" entry point to "websecure"
+      - "--entrypoints.websecure.address=:443" # Define "websecure" entry point listening on port 443
+      - "--log.level=DEBUG" # Specify the log verbosity
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock" # Connect to Docker daemon using the socket
+      - "--providers.docker.exposedByDefault=false" # Don't expose containers by default. This allows you to selectively enable Traefik for specific containers using the label "traefik.enable=true".
+      - "--serversTransport.insecureSkipVerify=true" # Skip SSL certificate verification
+
     labels:
-      - "traefik.enable=true"
+      - "traefik.enable=true" # Enable Traefik for this service
+      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https" # Add a custom header for SSL
+      - "traefik.http.routers.traefik-secure.entrypoints=websecure" # Define secure entrypoint for the router
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.serverly.ca`)" # Define routing rule based on the hostname
+      - "traefik.http.routers.traefik-secure.service=api@internal" # Use the internal API service
+      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare" # Use Cloudflare as the certificate resolver
+      - "traefik.http.routers.traefik-secure.tls.domains[0].main=serverly.ca" # Define the main domain for TLS
+      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.serverly.ca" # Define the SANs for TLS
+      - "traefik.http.routers.traefik-secure.tls=true" # Enable TLS for the router
 
-      # Dashboard
-      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.serverly.ca`)"
-      - "traefik.http.routers.traefik-secure.service=api@internal"
-      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
-      - "traefik.http.routers.traefik-secure.entrypoints=https"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.serverly.ca`)"
-      - "traefik.http.routers.traefik.entrypoints=http"
-      # - "traefik.http.routers.traefik-secure.middlewares=traefik-auth" # Uncomment to require auth to access Dashboard.
-      # - "traefik.http.middlewares.traefik-auth.basicauth.users=$USER:$BASIC_AUTH_PASSWORD" # Uncomment to require auth to access Dashboard.
-
-      # TLS
-      - "traefik.http.routers.traefik-secure.tls=true"
-      - "traefik.http.routers.traefik-secure.tls.domains[0].main=serverly.ca"
-      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.serverly.ca"
+      # Global redirect to https # Extracted from: https://github.com/traefik-tech-blog/traefik-docker101/blob/main/docker-compose-08.yml
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)" # Catch all hosts with a regular expression
+      - "traefik.http.routers.http-catchall.entrypoints=web" # Define entrypoint for the catchall router
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https" # Apply the HTTPS redirect middleware
 
       # Middleware redirect
-      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
-      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https" # Redirect HTTP to HTTPS
+
+      # Dashboard Authentication.
+      # Uncomment the lines below if basic user/password authentication is desired to access the dashboard
+      # - "traefik.http.middlewares.traefik-auth.basicauth.users=$TRAEFIK_USER:$TRAEFIK_PASSWORD" # Set basic authentication user and password
+      # - "traefik.http.routers.traefik-secure.middlewares=traefik-auth" # Apply basic authentication middleware
 
   whoami:
     # A container that exposes an API to show its IP address
@@ -49,16 +70,12 @@ services:
     command:
       - --port=41234
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami.entrypoints=http"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.serverly.ca`)"
-      - "traefik.http.middlewares.whoami-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.whoami.middlewares=whoami-https-redirect"
-      - "traefik.http.routers.whoami-secure.entrypoints=https"
-      - "traefik.http.routers.whoami-secure.rule=Host(`whoami.serverly.ca`)"
-      - "traefik.http.routers.whoami-secure.tls=true"
-      - "traefik.http.routers.whoami-secure.service=whoami"
-      - "traefik.http.services.whoami.loadbalancer.server.port=41234"
+      - "traefik.enable=true" # Enable Traefik for this service
+      - "traefik.http.routers.whoami-secure.entrypoints=websecure" # Define entrypoint for the secure whoami router
+      - "traefik.http.routers.whoami-secure.rule=Host(`whoami.serverly.ca`)" # Set the routing rule for the secure whoami router
+      - "traefik.http.routers.whoami-secure.tls=true" # Enable TLS for the secure whoami router
+      - "traefik.http.routers.whoami-secure.service=whoami" # Define the service to use for the secure whoami router
+      - "traefik.http.services.whoami.loadbalancer.server.port=41234" # Set the target port for the whoami service
     networks:
       - proxy
 
