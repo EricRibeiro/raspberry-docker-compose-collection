@@ -52,11 +52,9 @@ function export_compose_variables {
 # the "acme" folder during the preparation step.
 #
 # $1 - Flag to indicate if the "acme" folder should be skipped during directory preparation (1 to skip, 0 otherwise).
-function main {
-  local -r should_skip_ACME="$1"
-  
+function main {  
   export_compose_variables
-  
+  local -r should_skip_ACME="$1"
   local -r docker_volume_traefik="$DOCKER_VOLUME_TRAEFIK"  
   local -r acme_file_name="acme.json"
   prepare_dir "$docker_volume_traefik" "$acme_file_name" "$should_skip_ACME" || { err_code="$?"; printf '%s\n' "Something went wrong while prepating the docker volume directory"; return "$err_code"; }
