@@ -34,69 +34,6 @@ function prepare_dir {
   chmod 600 "$acme_file"
 }
 
-# Public: Replace a variable in a YAML file with the value from an environment file.
-#
-# This function reads the value of a specified variable from an environment file
-# and replaces the specified variable in a YAML file with the extracted value.
-#
-# $1 - Path to the environment file (e.g., cloudflare.env).
-# $2 - Path to the YAML file (e.g., traefik.yaml).
-# $3 - Variable name in the environment file (e.g., CF_API_EMAIL).
-# $4 - Variable name in the YAML file (e.g., $CF_API_EMAIL).
-#
-# Examples
-#
-#   replace_cloudflare_email_var "cloudflare.env" "traefik.yaml" "CF_API_EMAIL" "\$CF_API_EMAIL"
-#
-# Returns nothing.
-function replace_yaml_content_with_env_content {
-  local -r env_file="$1"
-  local -r yaml_file="$2"
-  local -r var_name_in_env_file="$3"
-  local -r var_name_in_yaml="$4"
-
-  # Read the variable value from the environment file.
-  local var_value
-  var_value=$(grep "$var_name_in_env_file" "$env_file" | cut -d '=' -f 2) && readonly var_value
-
-  # Replace value in the YAML file with the envinronment file's extracted value.
-  sed -i "s/$var_name_in_yaml/$var_value/g" "$yaml_file"
-}
-
-# Public: Resolve IP address from a DNS domain and replace a variable in a YAML file.
-#
-# This function reads the domain value from an environment file, resolves the IP
-# address using the ping command, and replaces a specified variable in a YAML
-# file with the resolved IP address.
-#
-# $1 - Environment file path.
-# $2 - YAML file path.
-# $3 - Variable name in the environment file.
-# $4 - Variable name in the YAML file.
-#
-# Examples
-#
-#   resolve_ip_from_dns_and_replace_yaml_content "cloudflare.env" "traefik.yaml" "CF_NS_1" "\$CF_NS_1"
-#
-# Returns nothing.
-function resolve_ip_from_dns_and_replace_yaml_content {
-  local -r env_file="$1"
-  local -r yaml_file="$2"
-  local -r var_name_in_env_file="$3"
-  local -r var_name_in_yaml="$4"
-
-  # Read the variable value from the environment file.
-  local var_value
-  var_value=$(grep "$var_name_in_env_file" "$env_file" | cut -d '=' -f 2) && readonly var_value
-
-  # Resolve the IP Address from the DNS.
-  local ip_address
-  ip_address=$(ping -c 1 "$var_value" | grep -o -E '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -n 1) && readonly ip_address
-
-  # Replace value in the YAML file with the envinronment file's extracted value.
-  sed -i "s/$var_name_in_yaml/$ip_address/g" "$yaml_file"
-}
-
 # Public: Export environment variables for Docker Compose.
 #
 # This function exports the environment variables with their respective values.
@@ -123,21 +60,6 @@ function main {
   local -r docker_volume_traefik="$DOCKER_VOLUME_TRAEFIK"  
   local -r acme_file_name="acme.json"
   prepare_dir "$docker_volume_traefik" "$acme_file_name" "$should_skip_ACME" || { err_code="$?"; printf '%s\n' "Something went wrong while prepating the docker volume directory"; return "$err_code"; }
-  
-  local -r cloudflare_env_file=".env"
-  local -r traefik_yaml_file="$DOCKER_VOLUME_TRAEFIK/traefik.yml"
-  local -r email_var_in_env_file="CF_API_EMAIL"
-  local -r email_var_in_yaml_file="\$CF_API_EMAIL"
-  replace_yaml_content_with_env_content "$cloudflare_env_file" "$traefik_yaml_file" "$email_var_in_env_file" "$email_var_in_yaml_file"
-  
-  local -r ns_1_in_env_file="CF_NS_1"
-  local -r ns_1_in_yaml_file="\$CF_NS_1"
-  resolve_ip_from_dns_and_replace_yaml_content "$cloudflare_env_file" "$traefik_yaml_file" "$ns_1_in_env_file" "$ns_1_in_yaml_file"
-
-  local -r ns_2_in_env_file="CF_NS_2"
-  local -r ns_2_in_yaml_file="\$CF_NS_2"
-  resolve_ip_from_dns_and_replace_yaml_content "$cloudflare_env_file" "$traefik_yaml_file" "$ns_2_in_env_file" "$ns_2_in_yaml_file"
-
   docker compose up -d
 }
 
