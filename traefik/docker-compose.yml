@@ -24,7 +24,7 @@ services:
       - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/traefik/:/etc/traefik:rw
     command:
       - "--api.dashboard=true" # Enable the Traefik dashboard.
-      - "--certificatesResolvers.cloudflare.acme.caServer=${CA_SERVER_PRODUCTION}" # Use Let's Encrypt production or staging server. Staging has an higher API limit, use it for testing.
+      - "--certificatesResolvers.cloudflare.acme.caServer=${CA_SERVER_PRODUCTION}" # Use Let's Encrypt production or staging server. Staging has a higher API limit, use it for testing.
       - "--certificatesResolvers.cloudflare.acme.dnsChallenge.delayBeforeCheck=20" # Delay before checking DNS records
       - "--certificatesResolvers.cloudflare.acme.dnsChallenge.provider=cloudflare" # Use Cloudflare as DNS challenge provider
       - "--certificatesResolvers.cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,8.8.8.8:53" # Set well known DNS servers for the DNS challenge
