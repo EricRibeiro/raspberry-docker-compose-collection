@@ -3,7 +3,7 @@ version: '3'
 # More info at https://docs.technotim.live/posts/traefik-portainer-ssl/ and https://www.youtube.com/watch?v=liV3c9m_OX8
 services:
   traefik:
-    image: traefik:latest
+    image: traefik:v2.9
     container_name: traefik
     restart: unless-stopped
     security_opt:
@@ -38,7 +38,6 @@ services:
       - "--providers.docker.endpoint=unix:///var/run/docker.sock" # Connect to Docker daemon using the socket
       - "--providers.docker.exposedByDefault=false" # Don't expose containers by default. This allows you to selectively enable Traefik for specific containers using the label "traefik.enable=true".
       - "--serversTransport.insecureSkipVerify=true" # Skip SSL certificate verification
-
     labels:
       - "traefik.enable=true" # Enable Traefik for this service
       - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https" # Add a custom header for SSL
@@ -51,6 +50,7 @@ services:
       - "traefik.http.routers.traefik-secure.tls=true" # Enable TLS for the router
 
       # Global redirect to https # Extracted from: https://github.com/traefik-tech-blog/traefik-docker101/blob/main/docker-compose-08.yml
+      # This "catch all" rule takes care of the HTTPS redirect for all Traefik services.
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https" # Redirect HTTP to HTTPS
       - "traefik.http.routers.http-catchall.entrypoints=web" # Define entrypoint for the catchall router
       - "traefik.http.routers.http-catchall.middlewares=redirect-to-https" # Apply the HTTPS redirect middleware

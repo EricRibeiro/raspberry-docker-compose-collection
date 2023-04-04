@@ -2,18 +2,18 @@ version: "3"
 
 services:
   pihole:
-    image: pihole/pihole:latest
+    image: pihole/pihole:2023.03.1
     container_name: pihole
     ports:
       - "53:53/tcp"
       - "53:53/udp"
     environment:
-      TZ: 'America/Vancouver'
-      WEBPASSWORD: ''
-      PIHOLE_DNS_: 1.1.1.1;1.0.0.1
-      VIRTUAL_HOST: pihole.serverly.ca
       DNSMASQ_LISTENING: all
       FTLCONF_LOCAL_IPV4: 192.168.1.225
+      PIHOLE_DNS_: 1.1.1.1;1.0.0.1
+      TZ: 'America/Vancouver'
+      VIRTUAL_HOST: pihole.serverly.ca
+      WEBPASSWORD: ''
     volumes:
       - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/pihole/pihole:/etc/pihole:rw
       - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/pihole/dnsmasq.d:/etc/dnsmasq.d:rw
