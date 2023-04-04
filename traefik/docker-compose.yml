@@ -14,12 +14,11 @@ services:
       - 80:80
       - 443:443
     env_file:
-      - cloudflare.env
-      - traefik.env
+      - .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/traefik/:/etc/traefik
+      - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/traefik/:/etc/traefik:rw
     labels:
       - "traefik.enable=true"
 
