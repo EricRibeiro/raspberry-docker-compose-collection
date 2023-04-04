@@ -51,12 +51,10 @@ services:
       - "traefik.http.routers.traefik-secure.tls=true" # Enable TLS for the router
 
       # Global redirect to https # Extracted from: https://github.com/traefik-tech-blog/traefik-docker101/blob/main/docker-compose-08.yml
-      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)" # Catch all hosts with a regular expression
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https" # Redirect HTTP to HTTPS
       - "traefik.http.routers.http-catchall.entrypoints=web" # Define entrypoint for the catchall router
       - "traefik.http.routers.http-catchall.middlewares=redirect-to-https" # Apply the HTTPS redirect middleware
-
-      # Middleware redirect
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https" # Redirect HTTP to HTTPS
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)" # Catch all hosts with a regular expression
 
       # Dashboard Authentication.
       # Uncomment the lines below if basic user/password authentication is desired to access the dashboard
