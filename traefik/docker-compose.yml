@@ -65,6 +65,7 @@ services:
 
   whoami:
     # A container that exposes an API to show its IP address
+    # It's good to keep it for testing purposes. See the example at https://doc.traefik.io/traefik/getting-started/quick-start/
     image: traefik/whoami:v1.9
     container_name: whoami
     command:
