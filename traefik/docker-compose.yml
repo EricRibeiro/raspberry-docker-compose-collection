@@ -1,6 +1,8 @@
 version: '3'
 
 # More info at https://docs.technotim.live/posts/traefik-portainer-ssl/ and https://www.youtube.com/watch?v=liV3c9m_OX8
+# Please note that the resource above utilizes a separate "traefik.yml" file for static configuration.
+# In contrast, this example keeps the static configuration under the "command" section to maintain everything in a single file.
 services:
   traefik:
     image: traefik:v2.9
@@ -50,14 +52,14 @@ services:
       - "traefik.http.routers.traefik-secure.tls=true" # Enable TLS for the router
 
       # Global redirect to https # Extracted from: https://github.com/traefik-tech-blog/traefik-docker101/blob/main/docker-compose-08.yml
-      # This "catch all" rule takes care of the HTTPS redirect for all Traefik services.
+      # The "catch-all" rule handles HTTPS redirects for all Traefik services, eliminating the need to write individual redirects for each service managed by Traefik.
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https" # Redirect HTTP to HTTPS
       - "traefik.http.routers.http-catchall.entrypoints=web" # Define entrypoint for the catchall router
       - "traefik.http.routers.http-catchall.middlewares=redirect-to-https" # Apply the HTTPS redirect middleware
       - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)" # Catch all hosts with a regular expression
 
       # Dashboard Authentication.
-      # Uncomment the lines below if basic user/password authentication is desired to access the dashboard
+      # Uncomment the lines below if basic user/password authentication is desired to access the dashboard.
       # - "traefik.http.middlewares.traefik-auth.basicauth.users=$TRAEFIK_USER:$TRAEFIK_PASSWORD" # Set basic authentication user and password
       # - "traefik.http.routers.traefik-secure.middlewares=traefik-auth" # Apply basic authentication middleware
 
