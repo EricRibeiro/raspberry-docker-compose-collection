@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# This script is designed to deploy Docker containers, networks, and volumes defined in the specified docker-compose.yml file.
+# The script first checks if it's running with root privileges, sources the global and local environment variables,
+# and prepares the Traefik Docker volume directory with the required configuration files and dependencies.
+# The ACME file's permission is set to 600, and the script provides an option to skip copying the "acme" folder.
+# Finally, the script runs 'docker compose up -d' with the specified environment files and docker-compose.yml file.
+
 # Public: Prepare the Traefik Docker volume directory and create the acme.json file.
 #
 # This function creates the specified Traefik Docker volume directory if it doesn't
@@ -57,7 +63,6 @@ function main {
 # Error-out if script isn't running with sudo
 [ "$EUID" -eq 0 ] || { printf '%s\n' "Please run this script with sudo or as the root user."; exit 1; }
 
-# Useful to avoiding recreating certs and hitting LetsEncrypt API limit.
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-readonly skip_ACME="${SKIP_ACME:-1}"
+readonly skip_ACME="${SKIP_ACME:-1}" # Useful to avoiding recreating certs and hitting LetsEncrypt API limit.
 main "$skip_ACME"
