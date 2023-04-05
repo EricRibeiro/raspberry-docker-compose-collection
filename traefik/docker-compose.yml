@@ -44,11 +44,11 @@ services:
       - "traefik.enable=true" # Enable Traefik for this service
       - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https" # Add a custom header for SSL
       - "traefik.http.routers.traefik-secure.entrypoints=websecure" # Define secure entrypoint for the router
-      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.serverly.ca`)" # Define routing rule based on the hostname
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.${DOMAIN}`)" # Define routing rule based on the hostname
       - "traefik.http.routers.traefik-secure.service=api@internal" # Use the internal API service
       - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare" # Use Cloudflare as the certificate resolver
-      - "traefik.http.routers.traefik-secure.tls.domains[0].main=serverly.ca" # Define the main domain for TLS
-      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.serverly.ca" # Define the SANs for TLS
+      - "traefik.http.routers.traefik-secure.tls.domains[0].main=${DOMAIN}" # Define the main domain for TLS
+      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${DOMAIN}" # Define the SANs for TLS
       - "traefik.http.routers.traefik-secure.tls=true" # Enable TLS for the router
 
       # Global redirect to https # Extracted from: https://github.com/traefik-tech-blog/traefik-docker101/blob/main/docker-compose-08.yml
@@ -73,7 +73,7 @@ services:
     labels:
       - "traefik.enable=true" # Enable Traefik for this service
       - "traefik.http.routers.whoami-secure.entrypoints=websecure" # Define entrypoint for the secure whoami router
-      - "traefik.http.routers.whoami-secure.rule=Host(`whoami.serverly.ca`)" # Set the routing rule for the secure whoami router
+      - "traefik.http.routers.whoami-secure.rule=Host(`whoami.${DOMAIN}`)" # Set the routing rule for the secure whoami router
       - "traefik.http.routers.whoami-secure.tls=true" # Enable TLS for the secure whoami router
       - "traefik.http.routers.whoami-secure.service=whoami" # Define the service to use for the secure whoami router
       - "traefik.http.services.whoami.loadbalancer.server.port=41234" # Set the target port for the whoami service
