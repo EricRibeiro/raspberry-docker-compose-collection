@@ -23,7 +23,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${DOCKER_VOLUME_TRAEFIK}/:/etc/traefik:rw
+      - ${DOCKER_VOLUME}/:/etc/traefik:rw
     command:
       - "--api.dashboard=true" # Enable the Traefik dashboard.
       - "--certificatesResolvers.cloudflare.acme.caServer=${CA_SERVER_PRODUCTION}" # Use Let's Encrypt production or staging server. Staging has a higher API limit, use it for testing.
@@ -36,7 +36,7 @@ services:
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https" # Use HTTPS for the redirection
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure" # Redirect "web" entry point to "websecure"
       - "--entrypoints.websecure.address=:443" # Define "websecure" entry point listening on port 443
-      - "--log.level=DEBUG" # Specify the log verbosity
+      - "--log.level=INFO" # Specify the log verbosity
       - "--providers.docker.endpoint=unix:///var/run/docker.sock" # Connect to Docker daemon using the socket
       - "--providers.docker.exposedByDefault=false" # Don't expose containers by default. This allows you to selectively enable Traefik for specific containers using the label "traefik.enable=true".
       - "--serversTransport.insecureSkipVerify=true" # Skip SSL certificate verification
