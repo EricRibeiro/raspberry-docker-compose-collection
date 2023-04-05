@@ -28,7 +28,7 @@ function prepare_dir {
 
   if [ "$should_skip_ACME" -eq 1 ]; then
     # Copy and replace everything but the "acme" folder.
-    printf '%s\n' "Copying configuration files to \"$docker_volume_traefik\" except the "acme" folder..."
+    printf '%s\n' "Copying configuration files, except the "acme" folder, to \"$docker_volume_traefik\"..."
     find "$script_dir"/./traefik -mindepth 1 -maxdepth 1 ! -name 'acme' -exec cp -Rf {} "$docker_volume_traefik" \;
   else
     # Copy and replace everything.
