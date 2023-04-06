@@ -44,7 +44,7 @@ services:
       - "traefik.enable=true" # Enable Traefik for this service
       - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https" # Add a custom header for SSL
       - "traefik.http.routers.traefik-secure.entrypoints=websecure" # Define secure entrypoint for the router
-      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.${DOMAIN}`)" # Define routing rule based on the hostname
+      - "traefik.http.routers.traefik-secure.rule=Host(`${DOMAIN}`)" # Define routing rule based on the hostname. Change to "traefik.${DOMAIN}" if you want to use a subdomain to access the dashboard.
       - "traefik.http.routers.traefik-secure.service=api@internal" # Use the internal API service
       - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare" # Use Cloudflare as the certificate resolver
       - "traefik.http.routers.traefik-secure.tls.domains[0].main=${DOMAIN}" # Define the main domain for TLS

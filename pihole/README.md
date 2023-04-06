@@ -19,7 +19,7 @@ Not having DHCP working is not a problem if you don't plan on using Pi-hole's DH
 In this setup, you'll find an ".env.example" file that contains environment variables used to configure various services and settings for the project. Rename this file to ".env" and replace the placeholder values with your actual values. The variables in the ".env.example" file are:
 
 - `DOCKER_VOLUME`: The path to the Pi-hole Docker volume. It stores the configuration files and dependencies for the project.
-- `HOST_IP_ADDRESS`: The IP address of the host machine running Pi-hole. This is necessary for proper configuration of the wildcard DNS.
+- `HOST_IP_ADDRESS`: The IP address of the host machine running Pi-hole. This is necessary for proper configuration of the wildcard DNS and Pi-hole in general.
 
 ### docker-compose.sh
 
