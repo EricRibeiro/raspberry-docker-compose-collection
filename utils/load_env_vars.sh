@@ -12,9 +12,11 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 # Load global variables
 readonly global_env="${script_dir}/../global.env"
 [ -f "$global_env" ] || { printf "%s\n" "Please ensure \"global.env.example\" was renamed to \"global.env\" and populated."; exit 1; }
+printf "%s\n" "Loading global environment variables from \"${global_env}\"..."
 source "$global_env"
 
 # Load local variables
 readonly local_env="${script_dir}/.env"
 [ -f "$local_env" ] || { printf "%s\n" "Please ensure \"env.example\" was renamed to \".env\" and populated."; exit 1; }
+printf "%s\n" "Loading local environment variables from \"${local_env}\"..."
 source "$local_env"

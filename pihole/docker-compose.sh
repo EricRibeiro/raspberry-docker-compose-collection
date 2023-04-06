@@ -4,38 +4,32 @@
 # It handles the deployment and management of a Docker environment, setting up the necessary directory, copying configuration files, and running
 # the appropriate Docker commands based on the provided arguments ('up' or 'down').
 
-# Public: Prepare the Docker volume directory and create the acme.json file.
+# Public: Prepare the Docker volume directory.
 #
-# This function creates the specified Docker volume directory if it doesn't
-# exist. Then, it copies all the configuration files and dependencies to said directory
-# and sets the ACME file's permission to 600. If the clean_stored_data parameter is true,
-# it also clears stored data in the Docker volume directory if the directory exists.
+# This function creates the specified Docker volume directory if it doesn't exist.
+# Then, it copies all the configuration files and dependencies to the directory.
+# If the clean_stored_data parameter is true, it also clears stored data in
+# the Docker volume directory if the directory exists.
 #
 # $1 - Docker volume directory.
-# $2 - ACME file name.
-# $3 - Boolean flag to clean stored data in the Docker volume directory.
+# $2 - Boolean flag to clean stored data in the Docker volume directory.
 function prepare_volume_directory {
   local -r docker_volume="$1"
-  local -r acme_file_name="$2"
-  local -r clean_stored_data="$3"
-  local -r acme_file="$docker_volume/acme/$acme_file_name"
+  local -r clean_stored_data="$2"
 
   # Create volume directory if it doesn't exist.
   printf '%s\n' "Creating \"$docker_volume\"..."
   mkdir -p "$docker_volume"
 
-  if [ "$clean_stored_data" = true ]; then
-    # Copy and replace everything.
-    printf '%s\n' "Copying configuration files to \"$docker_volume\". This will remove existing certificates..."
-    cp -Rf "$script_dir"/./traefik/* "$docker_volume"
-  else
-    # Copy and replace everything but the "acme" folder.
-    printf '%s\n' "Copying configuration files, except the "acme" folder, to \"$docker_volume\"..."
-    find "$script_dir"/./traefik -mindepth 1 -maxdepth 1 ! -name 'acme' -exec cp -Rf {} "$docker_volume" \;
+  # Clean stored data if the flag is set and the directory exists.
+  if [ "$clean_stored_data" = true ] && [ -d "$docker_volume/pihole" ]; then
+    printf '%s\n' "Cleaning stored data in \"$docker_volume/pihole\"..."
+    rm -rf "$docker_volume/pihole/*"
   fi
 
-  # Set right permission for the ACME file
-  chmod 600 "$acme_file"
+  # Copy and replace everything.
+  printf '%s\n' "Copying configuration files to \"$docker_volume\"..."
+  cp -Rf "$script_dir"/./dnsmasq.d "$docker_volume"
 }
 
 # Public: Deploy Docker containers, networks, and volumes defined in the specified docker-compose.yml file.
@@ -52,8 +46,7 @@ function prepare_volume_directory {
 function docker_compose_up {
   local -r docker_volume="$1"
   local -r clean_stored_data="$2"
-  local -r acme_file_name="acme.json"
-  prepare_volume_directory "$docker_volume" "$acme_file_name" "$clean_stored_data" || { err_code="$?"; printf '%s\n' "Something went wrong while prepating the docker volume directory"; return "$err_code"; }
+  prepare_volume_directory "$docker_volume" "$clean_stored_data" || { err_code="$?"; printf '%s\n' "Something went wrong while preparing the docker volume directory"; return "$err_code"; }
   docker compose --env-file "$script_dir"/../global.env --env-file "$script_dir"/.env --file "$script_dir"/docker-compose.yml up -d
 }
 
@@ -67,11 +60,11 @@ function docker_compose_down {
 
 # Public: Main function of the script.
 #
-# This function accepts the command ('up' or 'down') and a flag to indicate if the "acme" folder should be skipped during
-# directory preparation (true to skip, false otherwise). It then calls the appropriate function based on the command.
+# This function accepts the command ('up' or 'down').
+# It then calls the appropriate function based on the command.
 #
 # $1 - Command to execute ('up' or 'down').
-# $2 - Boolean flag to clean stored data in the Docker volume directory.
+# $2 - Boolean flag to clean stored data in the Docker volume directory (optional; default: false).
 function main {
   local -r command="$1"
   local -r clean_stored_data="$2"
@@ -79,7 +72,9 @@ function main {
   script_dir="$(cd "$(dirname "$0")" && pwd)"
 
   if [ "$command" == "up" ]; then
+    # Check if the script is running with "sudo".
     [ "$EUID" -eq 0 ] || { printf '%s\n' "Please run this script with sudo or as the root user."; exit 1; }
+    # Import script to expand "global.env" and ".env"
     source "$script_dir"/../utils/load_env_vars.sh
     docker_compose_up "$DOCKER_VOLUME" "$clean_stored_data"
   elif [ "$command" == "down" ]; then
@@ -91,5 +86,5 @@ function main {
 }
 
 command="${1:-'up'}"
-clean_stored_data="${2:-false}" # Useful to avoiding recreating certs and hitting LetsEncrypt API limit.
+clean_stored_data="${2:-false}"
 main "$command" "$clean_stored_data"

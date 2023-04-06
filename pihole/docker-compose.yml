@@ -9,14 +9,14 @@ services:
       - "53:53/udp"
     environment:
       DNSMASQ_LISTENING: all
-      FTLCONF_LOCAL_IPV4: 192.168.1.225
+      FTLCONF_LOCAL_IPV4: ${HOST_IP_ADDRESS}
       PIHOLE_DNS_: 1.1.1.1;1.0.0.1
-      TZ: 'America/Vancouver'
-      VIRTUAL_HOST: pihole.serverly.ca
+      TZ: ${TIMEZONE}
+      VIRTUAL_HOST: pihole.${DOMAIN}
       WEBPASSWORD: ''
     volumes:
-      - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/pihole/pihole:/etc/pihole:rw
-      - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/pihole/dnsmasq.d:/etc/dnsmasq.d:rw
+      - ${DOCKER_VOLUME}/pihole:/etc/pihole:rw
+      - ${DOCKER_VOLUME}/dnsmasq.d:/etc/dnsmasq.d:rw
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
@@ -28,7 +28,7 @@ services:
       - "traefik.docker.network=proxy" 
       - "traefik.enable=true" # Enable Traefik for this service
       - "traefik.http.routers.pihole-secure.entrypoints=websecure" # Assign the secure entrypoint for the router
-      - "traefik.http.routers.pihole-secure.rule=Host(`pihole.serverly.ca`)" # Set the routing rule based on the hostname
+      - "traefik.http.routers.pihole-secure.rule=Host(`pihole.${DOMAIN}`)" # Set the routing rule based on the hostname
       - "traefik.http.routers.pihole-secure.service=pihole" # Define the service for this router
       - "traefik.http.routers.pihole-secure.tls=true" # Enable TLS for the router
       - "traefik.http.services.pihole.loadbalancer.server.port=80" # Set the service's target port
