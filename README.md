@@ -1,7 +1,7 @@
 # Raspberry Docker Compose Collection
 This repository contains a collection of Docker Compose configurations for various services designed to run on a Raspberry Pi. Running these services via Docker allows for better isolation, easier management, and simpler upgrades compared to installing each of them natively on the Raspberry Pi. Each service has its own README.md file with instructions on how to run and configure them.
 
-In this collection, Traefik serves as the backbone for all the included services. The main goal is to have all services running seamlessly behind Traefik, providing a unified and secure access point. To help users quickly verify if a service behind Traefik is reachable, the "whoami" service is included, following the example provided in the [Traefik Quick Start guide](https://doc.traefik.io/traefik/getting-started/quick-start/).
+In this collection, Traefik serves as the backbone for all the included services. The main goal is to have all services running seamlessly behind Traefik, providing a unified and secure access point. To help users quickly verify if a service behind Traefik is reachable, the `whoami` service is included, following the example provided in the [Traefik Quick Start guide](https://doc.traefik.io/traefik/getting-started/quick-start/).
 
 ## Environment Files
 There are environment files in the root of the repository and in each service folder containing the necessary variables required to run the services. These environment files have an "example" suffix that must be removed (i.e., global.env and .env), and the files themselves must be populated with appropriate values.
@@ -9,7 +9,7 @@ There are environment files in the root of the repository and in each service fo
 These environment files are used by the bash scripts inside each service folder to prepare the host environment to run the Docker container. This preparation is usually in the form of preparing a folder and its contents to be mounted in the container.
 
 ## Shell Scripts
-Every service has a `docker-compose.sh` script. These scripts are essentially wrappers for Docker's native compose command. Running the native command directly won't work because it won't inject the variables from "global.env" and ".env", and it won't ensure that the host has the necessary content in the mounted volumes to spin up the container.
+Every service has a `docker-compose.sh` script. These scripts are essentially wrappers for Docker's native compose command. Running the native command directly won't work because it won't inject the variables from `global.env` and `.env`, and it won't ensure that the host has the necessary content in the mounted volumes to spin up the container.
 
 It's important to use the provided scripts to spin up and down every service. The `README.md` files inside each service folder have more information and usage examples of these scripts.
 
