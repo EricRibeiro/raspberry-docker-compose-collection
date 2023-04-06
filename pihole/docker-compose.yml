@@ -1,52 +1,38 @@
 version: "3"
 
-# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
-# This file doesn't support DHCP as it is. Read the "Quick Start" to see what is required.
-# For more info on DHCP and network modes: https://docs.pi-hole.net/docker/dhcp/
 services:
   pihole:
-    image: pihole/pihole:latest
+    image: pihole/pihole:2023.03.1
     container_name: pihole
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-    restart: unless-stopped
-    cap_add:
-      - NET_ADMIN
-    dns:
-      - 127.0.0.1
-      - 1.1.1.1
     environment:
-      TZ: 'America/Vancouver'
-      WEBPASSWORD: ''
-      ServerIP: '192.168.1.225'
-      DNS1: '1.1.1.1'
-      DNS2: '1.0.0.1'
-      VIRTUAL_HOST: pi.hole
       DNSMASQ_LISTENING: all
+      FTLCONF_LOCAL_IPV4: ${HOST_IP_ADDRESS}
+      PIHOLE_DNS_: 1.1.1.1;1.0.0.1
+      TZ: ${TIMEZONE}
+      VIRTUAL_HOST: pihole.${DOMAIN}
+      WEBPASSWORD: ''
     volumes:
-      - '${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/pihole/data:/etc/pihole'
-      - '${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/pihole/dnsmasq:/etc/dnsmasq.d'
-    depends_on:
-      - dhcphelper
-    networks:
-      dhcp-relay-net:
-        ipv4_address: '172.31.0.100'
-      frontproxy_proxy-tier: {}
-
-  dhcphelper:
-    build: ./
-    container_name: pihole-dhcphelper
-    restart: unless-stopped
-    network_mode: "host"
-    command: -s 172.31.0.100
+      - ${DOCKER_VOLUME}/pihole:/etc/pihole:rw
+      - ${DOCKER_VOLUME}/dnsmasq.d:/etc/dnsmasq.d:rw
     cap_add:
       - NET_ADMIN
+    restart: unless-stopped
+    networks:
+      - proxy
+    labels:
+      # Specify the network Traefik should use for this service. Not all services require this label but Pi-hole does.
+      # More info at https://stackoverflow.com/a/73159943
+      - "traefik.docker.network=proxy" 
+      - "traefik.enable=true" # Enable Traefik for this service
+      - "traefik.http.routers.pihole-secure.entrypoints=websecure" # Assign the secure entrypoint for the router
+      - "traefik.http.routers.pihole-secure.rule=Host(`pihole.${DOMAIN}`)" # Set the routing rule based on the hostname
+      - "traefik.http.routers.pihole-secure.service=pihole" # Define the service for this router
+      - "traefik.http.routers.pihole-secure.tls=true" # Enable TLS for the router
+      - "traefik.http.services.pihole.loadbalancer.server.port=80" # Set the service's target port
 
-networks:
-  dhcp-relay-net:
-    ipam:
-      config:
-        - subnet: 172.31.0.0/16
-  frontproxy_proxy-tier:
+networks: 
+  proxy:
     external: true
