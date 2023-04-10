@@ -35,3 +35,4 @@ services:
     volumes:
       - ${DOCKER_VOLUME}/pihole:/etc/pihole:rw
       - ${DOCKER_VOLUME}/dnsmasq.d:/etc/dnsmasq.d:rw
+      - ${DOCKER_VOLUME}/etc/resolv.conf:/etc/resolv.conf:rw
