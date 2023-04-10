@@ -1,0 +1,52 @@
+---
+version: '3'
+
+networks:
+  proxy:
+    external: true
+
+services:
+  qbittorrent:
+    container_name: qbittorrent
+    depends_on:
+      - wireguard
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+      - WEBUI_PORT=8080
+    image: linuxserver/qbittorrent:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.qbittorrent-secure.entrypoints=websecure
+      - traefik.http.routers.qbittorrent-secure.rule=Host(`qbittorrent.${DOMAIN}`)
+      - traefik.http.routers.qbittorrent-secure.service=qbittorrent
+      - traefik.http.routers.qbittorrent-secure.tls=true
+      - traefik.http.services.qbittorrent.loadbalancer.server.port=8080
+    network_mode: service:wireguard
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_VOLUME}/:/config:rw
+      - ${DOCKER_DATA_VOLUME}:/data/torrents:rw
+
+  wireguard:
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    container_name: wireguard
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+    image: linuxserver/wireguard:latest
+    networks:
+      - proxy
+    ports:
+      - ${QBITTORRENT_INCOMING_PORT}:${QBITTORRENT_INCOMING_PORT}/udp
+      - ${QBITTORRENT_INCOMING_PORT}:${QBITTORRENT_INCOMING_PORT}/tcp
+    restart: unless-stopped
+    sysctls:
+      net.ipv4.conf.all.src_valid_mark: 1
+      net.ipv6.conf.all.disable_ipv6: 0
+    volumes:
+      - ${DOCKER_VOLUME}/wireguard/wg0.conf:/config/wg0.conf:rw

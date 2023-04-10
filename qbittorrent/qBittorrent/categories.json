@@ -1,0 +1,11 @@
+{
+    "anime": {
+        "save_path": "anime"
+    },
+    "movies": {
+        "save_path": "movies"
+    },
+    "tv": {
+        "save_path": "tv"
+    }
+}
