@@ -1,12 +1,15 @@
-version: "3"
+---
+version: '3'
+
+networks:
+  proxy:
+    external: true
 
 services:
   pihole:
-    image: pihole/pihole:2023.03.1
+    cap_add:
+      - NET_ADMIN
     container_name: pihole
-    ports:
-      - "53:53/tcp"
-      - "53:53/udp"
     environment:
       DNSMASQ_LISTENING: all
       FTLCONF_LOCAL_IPV4: ${HOST_IP_ADDRESS}
@@ -14,25 +17,21 @@ services:
       TZ: ${TIMEZONE}
       VIRTUAL_HOST: pihole.${DOMAIN}
       WEBPASSWORD: ''
+    image: pihole/pihole:2023.03.1
+    labels:
+      - traefik.docker.network=proxy
+      - traefik.enable=true
+      - traefik.http.routers.pihole-secure.entrypoints=websecure
+      - traefik.http.routers.pihole-secure.rule=Host(`pihole.${DOMAIN}`)
+      - traefik.http.routers.pihole-secure.service=pihole
+      - traefik.http.routers.pihole-secure.tls=true
+      - traefik.http.services.pihole.loadbalancer.server.port=80
+    networks:
+      - proxy
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+    restart: unless-stopped
     volumes:
       - ${DOCKER_VOLUME}/pihole:/etc/pihole:rw
       - ${DOCKER_VOLUME}/dnsmasq.d:/etc/dnsmasq.d:rw
-    cap_add:
-      - NET_ADMIN
-    restart: unless-stopped
-    networks:
-      - proxy
-    labels:
-      # Specify the network Traefik should use for this service. Not all services require this label but Pi-hole does.
-      # More info at https://stackoverflow.com/a/73159943
-      - "traefik.docker.network=proxy" 
-      - "traefik.enable=true" # Enable Traefik for this service
-      - "traefik.http.routers.pihole-secure.entrypoints=websecure" # Assign the secure entrypoint for the router
-      - "traefik.http.routers.pihole-secure.rule=Host(`pihole.${DOMAIN}`)" # Set the routing rule based on the hostname
-      - "traefik.http.routers.pihole-secure.service=pihole" # Define the service for this router
-      - "traefik.http.routers.pihole-secure.tls=true" # Enable TLS for the router
-      - "traefik.http.services.pihole.loadbalancer.server.port=80" # Set the service's target port
-
-networks: 
-  proxy:
-    external: true

@@ -6,42 +6,12 @@ To properly use this script, it is recommended that you have Docker and Docker C
 
 ## Setup
 
-Before diving into the configuration details, it's important to have a basic understanding of the setup process. This section will walk you through the necessary steps to prepare your environment, and configure the required files.
+This section provides a brief introduction to the setup process.
 
 ### .env.example
 
-The `.env.example` file is a template for the environment variables that are used to configure various services and settings for the Portainer project. To use this file, you should rename it to `.env` and replace the placeholder value with your actual value. This value is the path where the Portainer volume is stored.
+The `.env.example` file is a template with values that should be filled in and renamed to ".env".
 
-### docker-compose.sh
+#### DOCKER_VOLUME
 
-The `docker-compose.sh` script is designed to deploy, stop, and remove Docker containers, networks, and volumes defined in the specified docker-compose.yml file. It handles the deployment and management of a Docker environment, setting up the necessary directory, copying configuration files, and running the appropriate Docker commands based on the provided arguments ('up' or 'down').
-
-## Usage
-
-To run the script, use the following command format:
-
-```bash
-sudo ./docker-compose.sh <command> <clean_stored_data>
-```
-
-Where `<command>` is either `up` or `down`, and `<clean_stored_data>` is a boolean value (`true` or `false`) that indicates whether to clean stored data in the Docker volume directory.
-
-### Examples:
-
-To deploy the Docker environment without cleaning stored data:
-```bash
-sudo ./docker-compose.sh up false
-```
-
-To deploy the Docker environment and clean stored data:
-```bash
-sudo ./docker-compose.sh up true
-```
-
-To stop and remove the Docker environment:
-```bash
-sudo ./docker-compose.sh down
-```
-
-> **Warning**
-> Remember to replace the placeholder values in the ".env" file with your actual values before running the script.
+This variable represents the path to the Docker volume that stores the configuration files and dependencies for the project. Replace the placeholder value with the appropriate path on your system.

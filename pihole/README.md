@@ -16,41 +16,12 @@ Not having DHCP working is not a problem if you don't plan on using Pi-hole's DH
 
 ### .env.example
 
-In this setup, you'll find an ".env.example" file that contains environment variables used to configure various services and settings for the project. Rename this file to ".env" and replace the placeholder values with your actual values. The variables in the ".env.example" file are:
+The `.env.example` file is a template with values that should be filled in and renamed to ".env".
 
-- `DOCKER_VOLUME`: The path to the Pi-hole Docker volume. It stores the configuration files and dependencies for the project.
-- `HOST_IP_ADDRESS`: The IP address of the host machine running Pi-hole. This is necessary for proper configuration of the wildcard DNS and Pi-hole in general.
+#### DOCKER_VOLUME
 
-### docker-compose.sh
+This variable represents the path to the Docker volume that stores the configuration files and dependencies for the project. Replace the placeholder value with the appropriate path on your system.
 
-The "docker-compose.sh" script is designed to deploy, stop, and remove Docker containers, networks, and volumes defined in the specified `docker-compose.yml` file. It handles the deployment and management of the Docker environment, setting up the necessary directory, copying configuration files, and running the appropriate Docker commands based on the provided arguments ('up' or 'down').
+#### HOST_IP_ADDRESS
 
-## Usage
-
-To run the script, use the following command format:
-
-```bash
-sudo ./docker-compose.sh <command> <clean_stored_data>
-```
-
-Where `<command>` is either `up` or `down`, and `<clean_stored_data>` is a boolean value (`true` or `false`) that indicates whether to clean stored data in the Docker volume directory.
-
-### Examples:
-
-To deploy the Docker environment without cleaning stored data (useful to clean Pi-hole's data):
-```bash
-sudo ./docker-compose.sh up false
-```
-
-To deploy the Docker environment and clean stored data:
-```bash
-sudo ./docker-compose.sh up true
-```
-
-To stop and remove the Docker environment:
-```bash
-sudo ./docker-compose.sh down
-```
-
-> **Warning**
-> Remember to replace the placeholder values in the ".env" file with your actual values before running the script.
+This variable represents the IP address of the host machine running the setup. It is necessary for proper configuration of the wildcard DNS and the services in general. Replace the placeholder value with the IP address of your host machine.
