@@ -1,3 +1,4 @@
+---
 version: '3'
 
 networks:
@@ -5,52 +6,47 @@ networks:
     external: true
 
 services:
+  qbittorrent:
+    container_name: qbittorrent
+    depends_on:
+      - wireguard
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+      - WEBUI_PORT=8080
+    image: linuxserver/qbittorrent:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.qbittorrent-secure.entrypoints=websecure
+      - traefik.http.routers.qbittorrent-secure.rule=Host(`qbittorrent.${DOMAIN}`)
+      - traefik.http.routers.qbittorrent-secure.service=qbittorrent
+      - traefik.http.routers.qbittorrent-secure.tls=true
+      - traefik.http.services.qbittorrent.loadbalancer.server.port=8080
+    network_mode: service:wireguard
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_VOLUME}/:/config:rw
+      - ${DOCKER_DATA_VOLUME}:/data/torrents:rw
+
   wireguard:
-    container_name: wireguard
-    image: linuxserver/wireguard
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
+    container_name: wireguard
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+    image: linuxserver/wireguard:latest
+    networks:
+      - proxy
+    ports:
+      - ${QBITTORRENT_INCOMING_PORT}:${QBITTORRENT_INCOMING_PORT}/udp
+      - ${QBITTORRENT_INCOMING_PORT}:${QBITTORRENT_INCOMING_PORT}/tcp
+    restart: unless-stopped
     sysctls:
       net.ipv4.conf.all.src_valid_mark: 1
       net.ipv6.conf.all.disable_ipv6: 0
     volumes:
-      # Generate a file here: https://mullvad.net/en/account/#/wireguard-config/
-      # and put it in the same folder as `docker-compose.yml`
-      # Make sure to name it `mullvad.conf` exactly.
-      #
-      # Alternatively: change the line below to match your local filename. If you use `my-vpn-provider.conf` instead, the line should look similar to:
-      # ./my-vpn-provider.conf:/etc/wireguard/mullvad.conf
-      #
-      # The last part after `:` isn't important, besides the fact it needs to be within `/etc/wireguard`.
-      #
-      # Keep in mind that the "Network interface" within qBitTorrent (second screenshot on wiki) is named
-      # based on the filename of `mullvad.conf` in `/etc/wireguard/mullvad.conf`
-      - ./mullvad.conf:/etc/wireguard/mullvad.conf
-    ports:
-      # I run NGINX on the host server for a reverse proxy.
-      # The secondary `8888` matches the `WEBUI_PORT` on the qBitTorrent container.
-      #
-      # This means that the host's port "8080" will now forward to port "8888" on the qBitTorrent container.
-      - "127.0.0.1:8080:8888"
-    restart: unless-stopped
-
-  qbittorrent:
-    container_name: qbittorent
-    image: linuxserver/qbittorrent:latest
-    depends_on:
-      - wireguard
-    network_mode: "service:wireguard"
-    networks:
-        - proxy
-    restart: unless-stopped
-    volumes:
-      # For persisting qBitTorrent configuration files
-      - ./config:/config
-      # Hard drives with more storage space, for download directories.
-      # - /data/media:/data/media
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Vancouver
-      - WEBUI_PORT=8888
+      - ${DOCKER_VOLUME}/wireguard/wg0.conf:/config/wg0.conf:rw
