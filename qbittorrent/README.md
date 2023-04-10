@@ -8,7 +8,7 @@ This repository provides a Docker Compose file with qBittorrent and WireGuard fo
 
 WireGuard is a modern, high-performance VPN protocol designed with simplicity, ease-of-use, and strong security in mind. Its advantages include being lightweight, fast, and easy to configure compared to other VPN protocols.
 
-To use this Compose file, you need to obtain a ".conf" file from your VPN provider. For Mullvad, you can get the configuration file [here](https://mullvad.net/en/account/#/wireguard-config/). Rename the file to "wg0.conf" and place it in the "wireguard" directory, where you will also find a "wg0.conf.example" file for reference. Ensure that the server connection protocol is IPv4. This Compose file uses the [linuxserver/wireguard](https://docs.linuxserver.io/images/docker-wireguard) image.
+To use this Compose file, you need to obtain a `.conf` file from your VPN provider. For Mullvad, you can get the configuration file [here](https://mullvad.net/en/account/#/wireguard-config/). Rename the file to `wg0.conf` and place it in the `wireguard` directory, where you will also find a `wg0.conf.example` file for reference. Ensure that the server connection protocol is IPv4. This Compose file uses the [linuxserver/wireguard](https://docs.linuxserver.io/images/docker-wireguard) image.
 
 ## Mullvad VPN
 
