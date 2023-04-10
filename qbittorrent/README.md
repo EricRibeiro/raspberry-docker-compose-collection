@@ -14,6 +14,24 @@ To use this Compose file, you need to obtain a `.conf` file from your VPN provid
 
 Mullvad VPN is a privacy-focused VPN service that offers strong encryption, a strict no-logs policy, and an easy-to-use interface. Its advantages include support for port forwarding. For more information, visit [this page](https://mullvad.net/en/help/port-forwarding-and-mullvad/). This Compose file has been tested with Mullvad VPN, but with minor changes, it should work with other providers.
 
+### Connection Testing
+
+After setting up the Docker environment, you can test if qBittorrent is connected to the internet via Mullvad VPN by running the following command:
+
+```bash
+docker exec -it qbittorrent curl https://am.i.mullvad.net/json
+```
+
+This command will return a JSON object containing information about the connection. If you are connected through Mullvad, the `mullvad_exit_ip` field in the response will be set to `true`. This test is based on the instructions provided by [Mullvad's Connection Check](https://mullvad.net/en/check).
+
+To test if the port forwarding is working correctly, you can run the following command:
+
+```bash
+docker exec -it qbittorrent curl https://ipv4.am.i.mullvad.net/port/${QBITTORRENT_INCOMING_PORT}
+```
+
+Replace `${QBITTORRENT_INCOMING_PORT}` with the actual incoming port you have configured for qBittorrent. This command will return a JSON object containing the status of the tested port. If the port is open and correctly forwarded, the `status` field in the response will be set to `true`. This test is based on the instructions provided by [Mullvad's Port Forwarding Guide](https://mullvad.net/en/help/port-forwarding-and-mullvad/).
+
 ## Setup
 
 This section provides a brief introduction to the setup process.
@@ -107,48 +125,6 @@ In this example, the subnet mask is `/24`.
 In our example, the IP address `192.168.1.5` in binary is `11000000.10101000.00000001.00000101`, and the subnet mask `/24` in binary is `11111111.11111111.11111111.00000000`. Performing a bitwise AND operation, we get `11000000.10101000.00000001.00000000`, which, when converted back to decimal, results in the subnet `192.168.1.0/24` (you can also use an online calculator 🤭).
 
 Now, set the "WEBUI_AUTH_SUBNET_WHITELIST" to the calculated subnet, which, in this example, is `192.168.1.0/24`.
-
-### docker-compose.sh
-
-The `docker-compose.sh` script is responsible for deploying, stopping, and removing Docker containers, networks, and volumes defined in the Compose file. This section explains how to use the script, detailing each parameter and providing examples with different parameter combinations.
-
-To use the script, run the following command:
-
-```bash
-sudo ./docker-compose.sh <command> <clean_stored_data> <overwrite_stored_data> <sub_directories> <owner> <group>
-```
-
-Where:
-
-- `<command>` is either `up` or `down`.
-- `<clean_stored_data>` is a boolean value (`true` or `false`) indicating whether to clean stored data in the Docker volume directory.
-- `<overwrite_stored_data>` is a boolean value (`true` or `false`) indicating whether to overwrite stored data in the Docker volume directory.
-- `<sub_directories>` is a string containing subdirectories to be created in the Docker volume directory (optional).
-- `<owner>` is the owner of the created files and directories (optional; default: SUDO_USER).
-- `<group>` is the group of the created files and directories (optional; default: SUDO_USER).
-
-#### Examples:
-
-1. To deploy the Docker environment without cleaning or overwriting stored data, and create "qBittorrent" and "wireguard" subdirectories with the owner and group set to "ericribeiro":
-
-```bash
-sudo ./docker-compose.sh up false false "qBittorrent,wireguard" "ericribeiro" "ericribeiro"
-```
-
-2. To deploy the Docker environment, clean stored data, overwrite existing data, and create "qBittorrent" and "wireguard" subdirectories with the owner and group set to "ericribeiro":
-
-```bash
-sudo ./docker-compose.sh up true true "qBittorrent,wireguard" "ericribeiro" "ericribeiro"
-```
-
-3. To stop and remove the Docker environment, and create "qBittorrent" and "wireguard" subdirectories with the owner and group set to "ericribeiro":
-
-```bash
-sudo ./docker-compose.sh down false false "qBittorrent,wireguard" "ericribeiro" "ericribeiro"
-```
-
-> **Warning**
-> Remember to replace the placeholder values in the ".env" file with your actual values before running the script.
 
 ## Legal Disclaimer
 

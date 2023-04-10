@@ -4,77 +4,15 @@ set -e
 # This script is designed to deploy, stop, and remove Docker containers, networks, and volumes defined in the specified docker-compose.yml file.
 # It handles the deployment and management of a Docker environment, setting up the necessary directory, copying configuration files, and running
 # the appropriate Docker commands based on the provided arguments ('up' or 'down').
-
-# Public: Prepare the Docker volume directory.
-#
-# This function creates the specified Docker volume directory if it doesn't exist.
-# Then, it copies all the configuration files and dependencies to the directory.
-# If the clean_stored_data parameter is true, it also clears stored data in
-# the Docker volume directory if the directory exists.
-#
-# $1 - Docker volume directory.
-# $2 - Boolean flag to clean stored data in the Docker volume directory.
-function prepare_volume_directory {
-  local -r docker_volume="$1"
-  local -r clean_stored_data="$2"
-  local -r temp_dir="$(mktemp -d)"
-
-  # Clean stored data if the flag is set and the directory exists.
-  if [ "$clean_stored_data" = true ] && [ -d "$docker_volume" ]; then
-    printf '%s\n' "Cleaning stored data in \"$docker_volume\"..."
-    rm -rf "$docker_volume"
-  fi
-
-  # Create volume directory and sub-directories if they don't exist.
-  printf '%s\n' "Creating \"$docker_volume\"..."
-  mkdir -p "$docker_volume"/{pihole,dnsmasq.d}
-
-  # Copy original files to the temporary directory.
-  cp -Rf "$script_dir"/./dnsmasq.d/* "$temp_dir"
-
- # Expand variables in the temporary files.
-  for file in "$temp_dir"/*; do
-    # Read the contents of the file and evaluate it to expand the variables.
-    contents=$(cat "$file")
-    eval "echo \"$contents\"" > "${file}.expanded"
-    mv "${file}.expanded" "$file"
-  done
-
-  # Copy and replace everything.
-  printf '%s\n' "Copying configuration files to \"$docker_volume\"..."
-  cp -Rf "$temp_dir"/* "$docker_volume/dnsmasq.d/"
-
-  # Remove the temporary directory.
-  rm -rf "$temp_dir"
-}
-
-# Public: Main function of the script.
-#
-# This function accepts the command ('up' or 'down').
-# It then calls the appropriate function based on the command.
-#
-# $1 - Command to execute ('up' or 'down').
-# $2 - Boolean flag to clean stored data in the Docker volume directory (optional; default: false).
-function main {
-  [ "$EUID" -eq 0 ] || { printf '%s\n' "Please run this script with sudo or as the root user."; exit 1; } # Check if the script is running with "sudo".
-  script_dir="$(cd "$(dirname "$0")" && pwd)" # Rely on paths relative to the script instead of the working directory.
-  source "$script_dir"/../utils/load_env_vars.sh # Import script to expand "global.env" and ".env"
-  source "$script_dir"/../utils/docker_compose.sh # Import script to deploy and remove Docker containers, networks, and volumes
-
-  local -r command="$1"
-  local -r clean_stored_data="$2"
-
-  if [ "$command" == "up" ]; then
-    prepare_volume_directory "$DOCKER_VOLUME" "$clean_stored_data"
-    docker_compose_up
-  elif [ "$command" == "down" ]; then
-    docker_compose_down
-  else
-    printf '%s\n' "Invalid command. Use 'up' or 'down'."
-    exit 1
-  fi
-}
+# For more information, see ../utils/main.sh and ../README.md.
 
 command="${1:-'up'}"
 clean_stored_data="${2:-false}"
-main "$command" "$clean_stored_data"
+overwrite_stored_data="${3:-false}"
+sub_directories="${4:-dnsmasq.d}"
+owner="${5:-$SUDO_USER}"
+group="${6:-$SUDO_USER}"
+
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+source "$script_dir"/../utils/main.sh # Import script to execute the main function.
+main "$command" "$clean_stored_data" "$overwrite_stored_data" "$sub_directories" "$owner" "$group"

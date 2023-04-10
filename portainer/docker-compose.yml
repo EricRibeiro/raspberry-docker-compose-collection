@@ -1,3 +1,4 @@
+---
 version: '3'
 
 networks:
@@ -6,18 +7,18 @@ networks:
 
 services:
   portainer:
-    container_name: 'portainer'
-    image: 'portainer/portainer-ce:latest'
-    networks:
-      - 'proxy'
-    restart: 'unless-stopped'
-    volumes:
-      - '${DOCKER_VOLUME}:/data'
-      - '/var/run/docker.sock:/var/run/docker.sock'
+    container_name: portainer
+    image: portainer/portainer-ce:latest
     labels:
-      - 'traefik.enable=true' # Enable Traefik for this service
-      - 'traefik.http.routers.portainer-secure.entrypoints=websecure' # Assign the secure entrypoint for the router
-      - 'traefik.http.routers.portainer-secure.rule=Host(`portainer.${DOMAIN}`)' # Set the routing rule based on the hostname
-      - 'traefik.http.routers.portainer-secure.service=portainer' # Define the service for this router
-      - 'traefik.http.routers.portainer-secure.tls=true' # Enable TLS for the router
-      - 'traefik.http.services.portainer.loadbalancer.server.port=9000' # Set the service's target port
+      - traefik.enable=true
+      - traefik.http.routers.portainer-secure.entrypoints=websecure
+      - traefik.http.routers.portainer-secure.rule=Host(`portainer.${DOMAIN}`)
+      - traefik.http.routers.portainer-secure.service=portainer
+      - traefik.http.routers.portainer-secure.tls=true
+      - traefik.http.services.portainer.loadbalancer.server.port=9000
+    networks:
+      - proxy
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_VOLUME}:/data
+      - /var/run/docker.sock:/var/run/docker.sock

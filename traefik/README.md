@@ -12,44 +12,36 @@ To set up Cloudflare as your DNS provider and change your nameservers, follow th
 
 ## Setup
 
-Before diving into the configuration details, it's important to have a basic understanding of the setup process. This section will walk you through the necessary steps to prepare your environment, and configure the required files.
+This section provides a brief introduction to the setup process.
 
 ### .env.example
 
-The `.env.example` file is a template for the environment variables that are used to configure various services and settings for the Traefik project. To use this file, you should rename it to `.env` and replace the placeholder values with your actual values. These values include your Cloudflare account email, API token for DNS access, Traefik basic authentication credentials, and the path where the Traefik volume is stored.
+The `.env.example` file is a template with values that should be filled in and renamed to ".env".
 
-To create your Cloudflare API token, navigate to https://dash.cloudflare.com/profile/api-tokens and generate a new token. Ensure that the token has "Zone.DNS" edit permissions. It is recommended to restrict the token to only the domain used for Traefik as the zone resource. This will help isolate the token, making it more secure and less prone to potential misuse.
+#### CA_SERVER_PRODUCTION
 
-### docker-compose.sh
+This variable represents the Let's Encrypt production API endpoint. It is set to `https://acme-v02.api.letsencrypt.org/directory` by default, and you should not change it.
 
-The `docker-compose.sh` script is designed to deploy, stop, and remove Docker containers, networks, and volumes defined in the specified docker-compose.yml file. It handles the deployment and management of a Docker environment, setting up the necessary directory, copying configuration files, and running the appropriate Docker commands based on the provided arguments ('up' or 'down').
+#### CA_SERVER_STAGING
 
-## Usage
+This variable represents the Let's Encrypt staging API endpoint. It is set to `https://acme-staging-v02.api.letsencrypt.org/directory` by default, and you should not change it.
 
-To run the script, use the following command format:
+#### CF_API_EMAIL
 
-```bash
-sudo ./docker-compose.sh <command> <clean_stored_data>
-```
+This variable represents the email address associated with your Cloudflare account. Replace the placeholder value `your_cloudflare_email` with the email address you use for your Cloudflare account.
 
-Where `<command>` is either `up` or `down`, and `<clean_stored_data>` is a boolean value (`true` or `false`) that indicates whether to clean stored data in the Docker volume directory.
+#### CF_DNS_API_TOKEN
 
-### Examples:
+This variable represents the API token for your Cloudflare account with DNS access. Replace the placeholder value `your_cloudflare_token` with the API token you obtained from your Cloudflare account.
 
-To deploy the Docker environment without cleaning stored data (useful to avoid recreating certs and hitting Let's Encrypt API limit):
-```bash
-sudo ./docker-compose.sh up false
-```
+#### DOCKER_VOLUME
 
-To deploy the Docker environment and clean stored data:
-```bash
-sudo ./docker-compose.sh up true
-```
+This variable represents the path where the Traefik volume is stored. The default value is `${DOCKER_VOLUME_ROOT}/traefik`, where `${DOCKER_VOLUME_ROOT}` should be set in the "global.env" file. Replace the placeholder value with the appropriate path on your system if needed.
 
-To stop and remove the Docker environment:
-```bash
-sudo ./docker-compose.sh down
-```
+#### TRAEFIK_PASSWORD
 
-> **Warning**
-> Remember to replace the placeholder values in the ".env" file with your actual values before running the script.
+This variable represents the basic authentication password for the Traefik dashboard. Replace the placeholder value `your_traefik_basic_auth_password` with a secure password of your choice.
+
+#### TRAEFIK_USER
+
+This variable represents the basic authentication username for the Traefik dashboard. Replace the placeholder value `your_traefik_basic_auth_user` with a username of your choice.
