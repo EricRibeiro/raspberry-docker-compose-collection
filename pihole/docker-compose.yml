@@ -29,10 +29,9 @@ services:
     networks:
       - proxy
     ports:
-      - 53:53/tcp
-      - 53:53/udp
+      - ${HOST_IP_ADDRESS}:53:53/tcp
+      - ${HOST_IP_ADDRESS}:53:53/udp
     restart: unless-stopped
     volumes:
       - ${DOCKER_VOLUME}/pihole:/etc/pihole:rw
       - ${DOCKER_VOLUME}/dnsmasq.d:/etc/dnsmasq.d:rw
-      - ${DOCKER_VOLUME}/etc/resolv.conf:/etc/resolv.conf:rw
