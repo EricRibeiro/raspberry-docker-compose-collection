@@ -73,4 +73,5 @@ function prepare_volume_directory {
 
   # Change ownership of the Docker volume directory and files to the specified user and group.
   chown -R "${owner}:${group}" "$docker_volume"
+  chmod -R a=,a+rX,u+w,g+w "$docker_volume"
 }

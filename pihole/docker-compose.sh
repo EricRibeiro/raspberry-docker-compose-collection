@@ -9,7 +9,7 @@ set -e
 command="${1:-'up'}"
 clean_stored_data="${2:-false}"
 overwrite_stored_data="${3:-false}"
-sub_directories="${4:-dnsmasq.d,etc}"
+sub_directories="${4:-dnsmasq.d}"
 owner="${5:-$SUDO_USER}"
 group="${6:-$SUDO_USER}"
 
