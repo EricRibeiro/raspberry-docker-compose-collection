@@ -1,0 +1,69 @@
+---
+version: '3'
+
+networks:
+  proxy:
+    external: true
+
+services:
+  prowlarr:
+    container_name: prowlarr
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+    image: lscr.io/linuxserver/prowlarr:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prowlarr-secure.entrypoints=websecure
+      - traefik.http.routers.prowlarr-secure.rule=Host(`prowlarr.${DOMAIN}`)
+      - traefik.http.routers.prowlarr-secure.service=prowlarr
+      - traefik.http.routers.prowlarr-secure.tls=true
+      - traefik.http.services.prowlarr.loadbalancer.server.port=9696
+    networks:
+      - proxy
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_VOLUME}/prowlarr:/config:rw
+
+  radarr:
+    container_name: radarr
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+    image: lscr.io/linuxserver/radarr:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.radarr-secure.entrypoints=websecure
+      - traefik.http.routers.radarr-secure.rule=Host(`radarr.${DOMAIN}`)
+      - traefik.http.routers.radarr-secure.service=radarr
+      - traefik.http.routers.radarr-secure.tls=true
+      - traefik.http.services.radarr.loadbalancer.server.port=7878
+    networks:
+      - proxy
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_VOLUME}/radarr:/config:rw
+      - ${DOCKER_DATA_VOLUME}:/data:rw
+
+  sonarr:
+    container_name: sonarr
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+    image: lscr.io/linuxserver/sonarr:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sonarr-secure.entrypoints=websecure
+      - traefik.http.routers.sonarr-secure.rule=Host(`sonarr.${DOMAIN}`)
+      - traefik.http.routers.sonarr-secure.service=sonarr
+      - traefik.http.routers.sonarr-secure.tls=true
+      - traefik.http.services.sonarr.loadbalancer.server.port=8989
+    networks:
+      - proxy
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_VOLUME}/sonarr:/config:rw
+      - ${DOCKER_DATA_VOLUME}:/data:rw
