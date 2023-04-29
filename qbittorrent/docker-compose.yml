@@ -22,6 +22,7 @@ services:
       - traefik.http.routers.qbittorrent-secure.rule=Host(`qbittorrent.${DOMAIN}`)
       - traefik.http.routers.qbittorrent-secure.service=qbittorrent
       - traefik.http.routers.qbittorrent-secure.tls=true
+      - traefik.http.routers.qbittorrent-secure.tls.certresolver=cloudflare
       - traefik.http.services.qbittorrent.loadbalancer.server.port=8080
     network_mode: service:wireguard
     restart: unless-stopped

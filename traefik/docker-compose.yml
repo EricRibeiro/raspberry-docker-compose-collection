@@ -78,6 +78,7 @@ services:
       - traefik.http.routers.whoami-secure.entrypoints=websecure
       - traefik.http.routers.whoami-secure.rule=Host(`whoami.${DOMAIN}`)
       - traefik.http.routers.whoami-secure.tls=true
+      - traefik.http.routers.whoami-secure.tls.certresolver=cloudflare
       - traefik.http.routers.whoami-secure.service=whoami
       - traefik.http.services.whoami.loadbalancer.server.port=41234
     networks:
