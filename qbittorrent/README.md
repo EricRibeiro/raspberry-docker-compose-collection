@@ -65,7 +65,11 @@ This section provides a brief introduction to the setup process.
 
 ### .env.example
 
-The `.env.example` file is a template with values that should be filled in and renamed to ".env".
+The `.env.example` file is a template containing placeholder values that you need to fill in. After replacing the placeholders with your actual values, rename the file to `.env`. This file is essential for configuring the environment variables required by the container.
+
+#### DOCKER_VOLUME
+
+This variable represents the path to the Docker volume that stores the configuration files and dependencies for the project. Replace the placeholder value with the appropriate path on your system.
 
 #### DOCKER_DATA_VOLUME
 

@@ -16,7 +16,7 @@ This section provides a brief introduction to the setup process.
 
 ### .env.example
 
-The `.env.example` file is a template with values that should be filled in and renamed to ".env".
+The `.env.example` file is a template containing placeholder values that you need to fill in. After replacing the placeholders with your actual values, rename the file to `.env`. This file is essential for configuring the environment variables required by the container.
 
 #### CA_SERVER_PRODUCTION
 
@@ -36,7 +36,7 @@ This variable represents the API token for your Cloudflare account with DNS acce
 
 #### DOCKER_VOLUME
 
-This variable represents the path where the Traefik volume is stored. The default value is `${DOCKER_VOLUME_ROOT}/traefik`, where `${DOCKER_VOLUME_ROOT}` should be set in the "global.env" file. Replace the placeholder value with the appropriate path on your system if needed.
+This variable represents the path to the Docker volume that stores the configuration files and dependencies for the project. Replace the placeholder value with the appropriate path on your system.
 
 #### TRAEFIK_PASSWORD
 

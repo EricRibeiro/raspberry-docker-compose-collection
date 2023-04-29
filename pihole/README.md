@@ -16,7 +16,7 @@ Not having DHCP working is not a problem if you don't plan on using Pi-hole's DH
 
 ### .env.example
 
-The `.env.example` file is a template with values that should be filled in and renamed to ".env".
+The `.env.example` file is a template containing placeholder values that you need to fill in. After replacing the placeholders with your actual values, rename the file to `.env`. This file is essential for configuring the environment variables required by the container.
 
 #### DOCKER_VOLUME
 

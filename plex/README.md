@@ -6,9 +6,13 @@ Plex is a powerful media server that allows you to organize, stream, and share y
 
 This section provides instructions to set up the Plex Docker container. For detailed information, please refer to the image's documentation page at [LinuxServer.io](https://docs.linuxserver.io/images/docker-plex) and [TRaSH's guide](https://trash-guides.info/Plex/).
 
-### env.example
+### .env.example
 
-The `env.example` file is a template containing placeholder values that you need to fill in. After replacing the placeholders with your actual values, rename the file to `.env`. This file is essential for configuring the environment variables required by the Docker containers.
+The `.env.example` file is a template containing placeholder values that you need to fill in. After replacing the placeholders with your actual values, rename the file to `.env`. This file is essential for configuring the environment variables required by the container.
+
+#### DOCKER_VOLUME
+
+This variable represents the path to the Docker volume that stores the configuration files and dependencies for the project. Replace the placeholder value with the appropriate path on your system.
 
 #### DOCKER_DATA_VOLUME
 

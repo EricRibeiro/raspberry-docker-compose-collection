@@ -20,9 +20,13 @@ Prowlarr is a meta-indexer and search tool that consolidates multiple indexers a
 
 The following subsections provide guidance on setting up the containers for each Servarr app. For more detailed information on each app, please visit the Servarr wiki at https://wiki.servarr.com/ or the container documentation pages for [Sonarr](https://docs.linuxserver.io/images/docker-sonarr), [Radarr](https://docs.linuxserver.io/images/docker-radarr), and [Prowlarr](https://docs.linuxserver.io/images/docker-prowlarr).
 
-### env.example
+### .env.example
 
-The `env.example` file is a template containing values that should be filled in and renamed to ".env". This file is necessary for configuring the environment variables required by the Docker containers.
+The `.env.example` file is a template containing placeholder values that you need to fill in. After replacing the placeholders with your actual values, rename the file to `.env`. This file is essential for configuring the environment variables required by the container.
+
+#### DOCKER_VOLUME
+
+This variable represents the path to the Docker volume that stores the configuration files and dependencies for the project. Replace the placeholder value with the appropriate path on your system.
 
 #### DOCKER_DATA_VOLUME
 
