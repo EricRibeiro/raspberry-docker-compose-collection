@@ -4,11 +4,36 @@ qBittorrent is an open-source, cross-platform BitTorrent client that aims to pro
 
 This repository provides a Docker Compose file with qBittorrent and WireGuard for the VPN setup. It has been tested using Mullvad VPN, with more details provided in the sections below. qBittorrent's default configuration comes from [TRaSH's setup guide](https://trash-guides.info/Downloaders/qBittorrent/Basic-Setup/).
 
-## WireGuard
+### WireGuard
 
 WireGuard is a modern, high-performance VPN protocol designed with simplicity, ease-of-use, and strong security in mind. Its advantages include being lightweight, fast, and easy to configure compared to other VPN protocols.
 
 To use this Compose file, you need to obtain a `.conf` file from your VPN provider. For Mullvad, you can get the configuration file [here](https://mullvad.net/en/account/#/wireguard-config/). Rename the file to `wg0.conf` and place it in the `wireguard` directory, where you will also find a `wg0.conf.example` file for reference. Ensure that the server connection protocol is IPv4. This Compose file uses the [linuxserver/wireguard](https://docs.linuxserver.io/images/docker-wireguard) image.
+
+### modprobe and ip6tables-restore error
+
+When starting the WireGuard container, you may come across the following error:
+
+> modprobe: can't change directory to '/lib/modules': No such file or directory
+> ip6tables-restore v1.8.8 (legacy): ip6tables-restore: unable to initialize table 'raw'
+
+This error can be found by running `docker logs wireguard`. It indicates that the required kernel module `ip6table_filter` is not loaded on the host system. Loading this module is essential for the proper functioning of WireGuard and the associated firewall rules.
+
+To resolve this issue, load the `ip6table_filter` kernel module on the host system by executing the following command:
+
+```bash
+sudo modprobe ip6table_filter
+```
+
+The `modprobe` command adds or removes kernel modules from the Linux kernel. In this case, it loads the `ip6table_filter` module, which is necessary for WireGuard and ip6tables-restore to function correctly.
+
+After running the command, the kernel module will be loaded, and the error should be resolved. However, this fix might need to be applied again if you reboot your system, as the kernel module may not be loaded automatically at startup. To make the change permanent, add the following line to the `/etc/modules` file:
+
+```
+ip6table_filter
+```
+
+This addition ensures that the `ip6table_filter` module is loaded automatically every time your system starts up, preventing the error from occurring in the future.
 
 ## Mullvad VPN
 
