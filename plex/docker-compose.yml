@@ -22,6 +22,7 @@ services:
       - traefik.http.routers.plex-secure.rule=Host(`plex.${DOMAIN}`)
       - traefik.http.routers.plex-secure.service=plex
       - traefik.http.routers.plex-secure.tls=true
+      - traefik.http.routers.plex-secure.tls.certresolver=cloudflare
       - traefik.http.services.plex.loadbalancer.server.port=32400
     network_mode: host
     restart: unless-stopped

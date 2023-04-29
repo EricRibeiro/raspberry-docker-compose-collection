@@ -15,6 +15,7 @@ services:
       - traefik.http.routers.portainer-secure.rule=Host(`portainer.${DOMAIN}`)
       - traefik.http.routers.portainer-secure.service=portainer
       - traefik.http.routers.portainer-secure.tls=true
+      - traefik.http.routers.portainer-secure.tls.certresolver=cloudflare
       - traefik.http.services.portainer.loadbalancer.server.port=9000
     networks:
       - proxy
