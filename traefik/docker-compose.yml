@@ -30,7 +30,7 @@ services:
     container_name: traefik
     extra_hosts:
       - host.docker.internal:172.17.0.1 # Map the hostname 'host.docker.internal' to the IP address '172.17.0.1' to allow the Traefik container to access services running on the host machine or other containers in the same Docker network using the 'host.docker.internal' hostname.
-    image: traefik:v2.9
+    image: traefik:v2.10
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
