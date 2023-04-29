@@ -1,0 +1,32 @@
+---
+version: '3'
+
+networks:
+  proxy:
+    external: true
+
+services:
+  plex:
+    container_name: plex
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - PGID=${PGID}
+      - PLEX_CLAIM=${CLAIM_TOKEN}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+      - VERSION=latest
+    image: lscr.io/linuxserver/plex:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.plex-secure.entrypoints=websecure
+      - traefik.http.routers.plex-secure.rule=Host(`plex.${DOMAIN}`)
+      - traefik.http.routers.plex-secure.service=plex
+      - traefik.http.routers.plex-secure.tls=true
+      - traefik.http.services.plex.loadbalancer.server.port=32400
+    network_mode: host
+    restart: unless-stopped
+    runtime: nvidia
+    volumes:
+      - ${DOCKER_VOLUME}/:/config:rw
+      - ${DOCKER_DATA_VOLUME}:/data/media:rw
+      - ${DOCKER_TRANSCODE_VOLUME}:/transcode:rw
