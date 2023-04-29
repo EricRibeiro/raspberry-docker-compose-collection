@@ -98,33 +98,17 @@ If the device is mounted correctly, your changes to the `/etc/fstab` file are va
 
 The "QBITTORRENT_INCOMING_PORT" variable should be the port provided by Mullvad in their [port forwarding guide](https://mullvad.net/en/help/port-forwarding-and-mullvad/).
 
+Here is the modified section "WEBUI_AUTH_SUBNET_WHITELIST" in the README file with the new information:
+
 #### WEBUI_AUTH_SUBNET_WHITELIST
 
-"WEBUI_AUTH_SUBNET_WHITELIST" should be the subnet of the Docker container running qBittorrent. This can be found by running `docker exec -it qbittorrent hostname -i`. This command returns the container's IP address but not the subnet. To determine the subnet, follow these steps:
-
-1. First, inspect the Docker network that the qBittorrent container is connected to. Replace `<network_name>` with the actual name of the Docker network:
+"WEBUI_AUTH_SUBNET_WHITELIST" should be the subnet of the Docker container running qBittorrent. To get the subnet of the Docker container, simply run the command below. This command will output the subnet, which you can set as the value of "WEBUI_AUTH_SUBNET_WHITELIST".
 
 ```bash
-docker network inspect <network_name>
+docker network inspect proxy &> /dev/null | grep -oP '"Subnet":\s*"\K[^"]+'
 ```
 
-In the output, find the "Containers" section, and locate the qBittorrent container by its name or container ID. Within the container's information, you will find the `"IPv4Address"` key, which contains the container's IP address and subnet mask. The subnet mask will be in the format `x.x.x.x/yy`. For example:
-
-```
-"IPv4Address": "192.168.1.5/24"
-```
-
-In this example, the subnet mask is `/24`.
-
-2. To calculate the subnet from the IP address and subnet mask, follow these steps:
-
-- Convert the IP address (e.g., `192.168.1.5`) and the subnet mask in CIDR notation (e.g., `/24`) to their binary representations.
-- Perform a bitwise AND operation between the binary IP address and the binary subnet mask.
-- Convert the result back to the decimal format, which represents the subnet.
-
-In our example, the IP address `192.168.1.5` in binary is `11000000.10101000.00000001.00000101`, and the subnet mask `/24` in binary is `11111111.11111111.11111111.00000000`. Performing a bitwise AND operation, we get `11000000.10101000.00000001.00000000`, which, when converted back to decimal, results in the subnet `192.168.1.0/24` (you can also use an online calculator 🤭).
-
-Now, set the "WEBUI_AUTH_SUBNET_WHITELIST" to the calculated subnet, which, in this example, is `192.168.1.0/24`.
+Before retrieving the subnet, make sure you have run the Traefik compose file (`../traefik/docker-compose.sh up`) first, as this file is responsible for the creation of the "proxy" network. If you don't want to run the Traefik compose file, you can create the "proxy" network manually.
 
 ## Legal Disclaimer
 
