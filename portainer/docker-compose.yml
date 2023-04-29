@@ -8,7 +8,7 @@ networks:
 services:
   portainer:
     container_name: portainer
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ce:2.18.1
     labels:
       - traefik.enable=true
       - traefik.http.routers.portainer-secure.entrypoints=websecure
