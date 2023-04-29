@@ -4,7 +4,7 @@ qBittorrent is an open-source, cross-platform BitTorrent client that aims to pro
 
 This repository provides a Docker Compose file with qBittorrent and WireGuard for the VPN setup. It has been tested using Mullvad VPN, with more details provided in the sections below. qBittorrent's default configuration comes from [TRaSH's setup guide](https://trash-guides.info/Downloaders/qBittorrent/Basic-Setup/).
 
-### WireGuard
+## WireGuard
 
 WireGuard is a modern, high-performance VPN protocol designed with simplicity, ease-of-use, and strong security in mind. Its advantages include being lightweight, fast, and easy to configure compared to other VPN protocols.
 
@@ -14,8 +14,10 @@ To use this Compose file, you need to obtain a `.conf` file from your VPN provid
 
 When starting the WireGuard container, you may come across the following error:
 
-> modprobe: can't change directory to '/lib/modules': No such file or directory
-> ip6tables-restore v1.8.8 (legacy): ip6tables-restore: unable to initialize table 'raw'
+```
+modprobe: can't change directory to '/lib/modules': No such file or directory
+ip6tables-restore v1.8.8 (legacy): ip6tables-restore: unable to initialize table 'raw'
+```
 
 This error can be found by running `docker logs wireguard`. It indicates that the required kernel module `ip6table_filter` is not loaded on the host system. Loading this module is essential for the proper functioning of WireGuard and the associated firewall rules.
 
@@ -39,7 +41,7 @@ This addition ensures that the `ip6table_filter` module is loaded automatically 
 
 Mullvad VPN is a privacy-focused VPN service that offers strong encryption, a strict no-logs policy, and an easy-to-use interface. Its advantages include support for port forwarding. For more information, visit [this page](https://mullvad.net/en/help/port-forwarding-and-mullvad/). This Compose file has been tested with Mullvad VPN, but with minor changes, it should work with other providers.
 
-### Connection Testing
+### Testing Connection
 
 After setting up the Docker environment, you can test if qBittorrent is connected to the internet via Mullvad VPN by running the following command:
 
