@@ -10,11 +10,38 @@ WireGuard is a modern, high-performance VPN protocol designed with simplicity, e
 
 To use this Compose file, you need to obtain a `.conf` file from your VPN provider. For Mullvad, you can get the configuration file [here](https://mullvad.net/en/account/#/wireguard-config/). Rename the file to `wg0.conf` and place it in the `wireguard` directory, where you will also find a `wg0.conf.example` file for reference. Ensure that the server connection protocol is IPv4. This Compose file uses the [linuxserver/wireguard](https://docs.linuxserver.io/images/docker-wireguard) image.
 
+### modprobe and ip6tables-restore error
+
+When starting the WireGuard container, you may come across the following error:
+
+```
+modprobe: can't change directory to '/lib/modules': No such file or directory
+ip6tables-restore v1.8.8 (legacy): ip6tables-restore: unable to initialize table 'raw'
+```
+
+This error can be found by running `docker logs wireguard`. It indicates that the required kernel module `ip6table_filter` is not loaded on the host system. Loading this module is essential for the proper functioning of WireGuard and the associated firewall rules.
+
+To resolve this issue, load the `ip6table_filter` kernel module on the host system by executing the following command:
+
+```bash
+sudo modprobe ip6table_filter
+```
+
+The `modprobe` command adds or removes kernel modules from the Linux kernel. In this case, it loads the `ip6table_filter` module, which is necessary for WireGuard and ip6tables-restore to function correctly.
+
+After running the command, the kernel module will be loaded, and the error should be resolved. However, this fix might need to be applied again if you reboot your system, as the kernel module may not be loaded automatically at startup. To make the change permanent, add the following line to the `/etc/modules` file:
+
+```
+ip6table_filter
+```
+
+This addition ensures that the `ip6table_filter` module is loaded automatically every time your system starts up, preventing the error from occurring in the future.
+
 ## Mullvad VPN
 
 Mullvad VPN is a privacy-focused VPN service that offers strong encryption, a strict no-logs policy, and an easy-to-use interface. Its advantages include support for port forwarding. For more information, visit [this page](https://mullvad.net/en/help/port-forwarding-and-mullvad/). This Compose file has been tested with Mullvad VPN, but with minor changes, it should work with other providers.
 
-### Connection Testing
+### Testing Connection
 
 After setting up the Docker environment, you can test if qBittorrent is connected to the internet via Mullvad VPN by running the following command:
 
@@ -98,33 +125,17 @@ If the device is mounted correctly, your changes to the `/etc/fstab` file are va
 
 The "QBITTORRENT_INCOMING_PORT" variable should be the port provided by Mullvad in their [port forwarding guide](https://mullvad.net/en/help/port-forwarding-and-mullvad/).
 
+Here is the modified section "WEBUI_AUTH_SUBNET_WHITELIST" in the README file with the new information:
+
 #### WEBUI_AUTH_SUBNET_WHITELIST
 
-"WEBUI_AUTH_SUBNET_WHITELIST" should be the subnet of the Docker container running qBittorrent. This can be found by running `docker exec -it qbittorrent hostname -i`. This command returns the container's IP address but not the subnet. To determine the subnet, follow these steps:
-
-1. First, inspect the Docker network that the qBittorrent container is connected to. Replace `<network_name>` with the actual name of the Docker network:
+"WEBUI_AUTH_SUBNET_WHITELIST" should be the subnet of the Docker container running qBittorrent. To get the subnet of the Docker container, simply run the command below. This command will output the subnet, which you can set as the value of "WEBUI_AUTH_SUBNET_WHITELIST".
 
 ```bash
-docker network inspect <network_name>
+docker network inspect proxy &> /dev/null | grep -oP '"Subnet":\s*"\K[^"]+'
 ```
 
-In the output, find the "Containers" section, and locate the qBittorrent container by its name or container ID. Within the container's information, you will find the `"IPv4Address"` key, which contains the container's IP address and subnet mask. The subnet mask will be in the format `x.x.x.x/yy`. For example:
-
-```
-"IPv4Address": "192.168.1.5/24"
-```
-
-In this example, the subnet mask is `/24`.
-
-2. To calculate the subnet from the IP address and subnet mask, follow these steps:
-
-- Convert the IP address (e.g., `192.168.1.5`) and the subnet mask in CIDR notation (e.g., `/24`) to their binary representations.
-- Perform a bitwise AND operation between the binary IP address and the binary subnet mask.
-- Convert the result back to the decimal format, which represents the subnet.
-
-In our example, the IP address `192.168.1.5` in binary is `11000000.10101000.00000001.00000101`, and the subnet mask `/24` in binary is `11111111.11111111.11111111.00000000`. Performing a bitwise AND operation, we get `11000000.10101000.00000001.00000000`, which, when converted back to decimal, results in the subnet `192.168.1.0/24` (you can also use an online calculator 🤭).
-
-Now, set the "WEBUI_AUTH_SUBNET_WHITELIST" to the calculated subnet, which, in this example, is `192.168.1.0/24`.
+Before retrieving the subnet, make sure you have run the Traefik compose file (`../traefik/docker-compose.sh up`) first, as this file is responsible for the creation of the "proxy" network. If you don't want to run the Traefik compose file, you can create the "proxy" network manually.
 
 ## Legal Disclaimer
 
