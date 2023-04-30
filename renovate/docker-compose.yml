@@ -1,0 +1,19 @@
+---
+version: '3'
+
+services:
+  renovate:
+    container_name: renovate
+    environment:
+      # Options can be found at https://docs.renovatebot.com/self-hosted-configuration/#platform.
+      - LOG_LEVEL=${RENOVATE_LOG_LEVEL}
+      - RENOVATE_BASE_DIR=/data
+      - RENOVATE_DRY_RUN=${RENOVATE_DRY_RUN}
+      - RENOVATE_GIT_PRIVATE_KEY=${RENOVATE_GIT_PRIVATE_KEY}
+      - RENOVATE_PLATFORM=${RENOVATE_PLATFORM}
+      - RENOVATE_REPOSITORIES=${RENOVATE_REPOSITORIES}
+      - RENOVATE_TOKEN=${RENOVATE_TOKEN}
+    image: renovate/renovate:latest
+    restart: no
+    volumes:
+      - ${DOCKER_VOLUME}:/data:rw
