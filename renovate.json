@@ -1,4 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "gitAuthor": "Eric Ribeiro <ericribeiro@outlook.com.br>"
+  "gitAuthor": "Eric Ribeiro <ericribeiro@outlook.com.br>",
+  "packageRules": [
+    {
+      "matchPackageNames": ["prowlarr"],
+      "allowedVersions": "<1.8"
+    }
+  ]
 }
