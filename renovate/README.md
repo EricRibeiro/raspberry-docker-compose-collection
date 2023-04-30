@@ -2,6 +2,10 @@
 
 Renovate Bot is an automated tool that helps developers keep their project dependencies up-to-date. It scans your project for dependencies, identifies outdated packages, and creates pull requests to update them. This makes it easier to maintain your projects and ensures that you are using the latest, most secure versions of the packages you rely on.
 
+## How to use it
+
+It's important to note that the Renovate Bot container is not designed to run continuously. Instead, it is meant to be executed at specific intervals to check for updates and create pull requests as needed. To achieve this, you should set up a cron job or another scheduling mechanism to spin up the Renovate container at the desired frequency. For more information on setting up cron jobs, visit the official [CronHowto](https://help.ubuntu.com/community/CronHowto) guide.
+
 ## Setup
 
 This section provides instructions on how to set up the Renovate container. For detailed information and additional options, please visit the official documentation: https://docs.renovatebot.com/self-hosted-configuration/ and https://docs.renovatebot.com/configuration-options/
