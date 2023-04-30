@@ -1,0 +1,38 @@
+---
+version: '3'
+
+networks:
+  proxy:
+    external: true
+
+services:
+  whoogle-search:
+    cap_drop:
+      - ALL
+    container_name: whoogle-search
+    environment:
+      - WHOOGLE_CONFIG_COUNTRY=${WHOOGLE_CONFIG_COUNTRY}
+      - WHOOGLE_CONFIG_GET_ONLY=${WHOOGLE_CONFIG_GET_ONLY}
+      - WHOOGLE_CONFIG_SEARCH_LANGUAGE=${WHOOGLE_CONFIG_SEARCH_LANGUAGE}
+    image: benbusby/whoogle-search:0.8.2
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.whoogle-secure.entrypoints=websecure
+      - traefik.http.routers.whoogle-secure.rule=Host(`whoogle.${DOMAIN}`)
+      - traefik.http.routers.whoogle-secure.service=whoogle
+      - traefik.http.routers.whoogle-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.whoogle-secure.tls=true
+      - traefik.http.services.whoogle.loadbalancer.server.port=5000
+    mem_limit: 256mb
+    memswap_limit: 256mb
+    networks:
+      - proxy
+    pids_limit: 50
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges
+    tmpfs:
+      - /config/:size=10M,uid=927,gid=927,mode=1700
+      - /run/tor/:size=1M,uid=927,gid=927,mode=1700
+      - /var/lib/tor/:size=15M,uid=927,gid=927,mode=1700
+    user: whoogle
