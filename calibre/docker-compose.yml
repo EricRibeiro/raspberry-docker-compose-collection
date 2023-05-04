@@ -1,0 +1,33 @@
+---
+version: '3'
+
+networks:
+  proxy:
+    external: true
+
+services:
+  calibre:
+    container_name: calibre
+    environment:
+      - CUSTOM_USER=${CALIBRE_USER}
+      - PASSWORD=${CALIBRE_PASSWORD}
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+    image: lscr.io/linuxserver/calibre:6.17.0
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.calibre-secure.entrypoints=websecure
+      - traefik.http.routers.calibre-secure.rule=Host(`calibre.${DOMAIN}`)
+      - traefik.http.routers.calibre-secure.service=calibre
+      - traefik.http.routers.calibre-secure.tls=true
+      - traefik.http.routers.calibre-secure.tls.certresolver=cloudflare
+      - traefik.http.services.calibre.loadbalancer.server.port=8080
+    networks:
+      - proxy
+    restart: unless-stopped
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - ${DOCKER_VOLUME}/:/config:rw
+      - ${DOCKER_DATA_VOLUME}/:/books:rw
