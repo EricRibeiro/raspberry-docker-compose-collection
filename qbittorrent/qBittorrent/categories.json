@@ -2,6 +2,9 @@
     "anime": {
         "save_path": "anime"
     },
+    "books": {
+        "save_path": "books"
+    },
     "movies": {
         "save_path": "movies"
     },
