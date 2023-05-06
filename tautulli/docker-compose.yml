@@ -1,0 +1,28 @@
+---
+version: '3'
+
+networks:
+  proxy:
+    external: true
+
+services:
+  tautulli:
+    container_name: tautulli
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+    image: tautulli/tautulli:v2.12.3
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.tautulli-secure.entrypoints=websecure
+      - traefik.http.routers.tautulli-secure.rule=Host(`tautulli.${DOMAIN}`)
+      - traefik.http.routers.tautulli-secure.service=tautulli
+      - traefik.http.routers.tautulli-secure.tls=true
+      - traefik.http.routers.tautulli-secure.tls.certresolver=cloudflare
+      - traefik.http.services.tautulli.loadbalancer.server.port=8181
+    networks:
+      - proxy
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_VOLUME}/:/config:rw
