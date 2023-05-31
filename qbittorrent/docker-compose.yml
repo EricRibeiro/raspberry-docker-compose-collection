@@ -15,7 +15,7 @@ services:
       - PUID=${PUID}
       - TZ=${TIMEZONE}
       - WEBUI_PORT=8080
-    image: lscr.io/linuxserver/qbittorrent:4.5.2
+    image: lscr.io/linuxserver/qbittorrent:4.5.3
     labels:
       - traefik.enable=true
       - traefik.http.routers.qbittorrent-secure.entrypoints=websecure
