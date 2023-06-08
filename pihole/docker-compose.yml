@@ -17,7 +17,7 @@ services:
       TZ: ${TIMEZONE}
       VIRTUAL_HOST: pihole.${DOMAIN}
       WEBPASSWORD: ''
-    image: pihole/pihole:2023.03.1
+    image: pihole/pihole:2023.05.2
     labels:
       - traefik.docker.network=proxy
       - traefik.enable=true
