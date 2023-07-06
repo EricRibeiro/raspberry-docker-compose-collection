@@ -15,7 +15,7 @@ services:
       - PGID=${PGID}
       - PUID=${PUID}
       - TZ=${TIMEZONE}
-    image: lscr.io/linuxserver/mullvad-browser:12.0.6
+    image: lscr.io/linuxserver/mullvad-browser:12.5.20230702
     labels:
       - traefik.enable=true
       - traefik.http.routers.mullvad-secure.entrypoints=websecure
