@@ -6,13 +6,35 @@ networks:
     external: true
 
 services:
+  bazarr:
+    container_name: bazarr
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+    image: lscr.io/linuxserver/bazarr:1.2.1
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.bazarr-secure.entrypoints=websecure
+      - traefik.http.routers.bazarr-secure.rule=Host(`bazarr.${DOMAIN}`)
+      - traefik.http.routers.bazarr-secure.service=bazarr
+      - traefik.http.routers.bazarr-secure.tls=true
+      - traefik.http.routers.bazarr-secure.tls.certresolver=cloudflare
+      - traefik.http.services.bazarr.loadbalancer.server.port=6767
+    networks:
+      - proxy
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_VOLUME}/bazarr:/config:rw
+      - ${DOCKER_DATA_VOLUME}:/data:rw
+
   prowlarr:
     container_name: prowlarr
     environment:
       - PGID=${PGID}
       - PUID=${PUID}
       - TZ=${TIMEZONE}
-    image: lscr.io/linuxserver/prowlarr:1.4.1
+    image: lscr.io/linuxserver/prowlarr:1.6.3
     labels:
       - traefik.enable=true
       - traefik.http.routers.prowlarr-secure.entrypoints=websecure
@@ -33,7 +55,7 @@ services:
       - PGID=${PGID}
       - PUID=${PUID}
       - TZ=${TIMEZONE}
-    image: lscr.io/linuxserver/radarr:4.5.2
+    image: lscr.io/linuxserver/radarr:4.6.4
     labels:
       - traefik.enable=true
       - traefik.http.routers.radarr-secure.entrypoints=websecure
