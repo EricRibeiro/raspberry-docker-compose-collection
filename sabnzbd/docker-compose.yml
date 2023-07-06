@@ -1,0 +1,29 @@
+---
+version: '3'
+
+networks:
+  proxy:
+    external: true
+
+services:
+  sabnzbd:
+    container_name: sabnzbd
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+    image: lscr.io/linuxserver/sabnzbd:4.0.2-ls114
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sabnzbd-secure.entrypoints=websecure
+      - traefik.http.routers.sabnzbd-secure.rule=Host(`sabnzbd.${DOMAIN}`)
+      - traefik.http.routers.sabnzbd-secure.service=sabnzbd
+      - traefik.http.routers.sabnzbd-secure.tls=true
+      - traefik.http.routers.sabnzbd-secure.tls.certresolver=cloudflare
+      - traefik.http.services.sabnzbd.loadbalancer.server.port=8080
+    networks:
+      - proxy
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_VOLUME}/:/config:rw
+      - ${DOCKER_DATA_VOLUME}:/data/usenet:rw
