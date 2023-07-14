@@ -12,7 +12,7 @@ services:
       - PGID=${PGID}
       - PUID=${PUID}
       - TZ=${TIMEZONE}
-    image: tautulli/tautulli:v2.12.4
+    image: tautulli/tautulli:v2.12.5
     labels:
       - traefik.enable=true
       - traefik.http.routers.tautulli-secure.entrypoints=websecure
