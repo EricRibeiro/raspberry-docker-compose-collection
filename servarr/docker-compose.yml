@@ -12,7 +12,7 @@ services:
       - PGID=${PGID}
       - PUID=${PUID}
       - TZ=${TIMEZONE}
-    image: lscr.io/linuxserver/bazarr:1.2.1
+    image: lscr.io/linuxserver/bazarr:1.2.4
     labels:
       - traefik.enable=true
       - traefik.http.routers.bazarr-secure.entrypoints=websecure
