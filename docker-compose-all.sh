@@ -22,8 +22,9 @@ exclude=(
   "whoogle"
 )
 
-# In case of 'down' action, 'traefik' should be handled last
-[[ $action == "down" ]] && exclude+=("traefik")
+# If the action is 'up', we need to run the action on 'traefik' first
+[[ $action == "up" && -d "./traefik" ]] && sudo "./traefik/docker-compose.sh" $action
+exclude+=("traefik")
 
 for dir in ./*; do
     if [[ -d "$dir" ]]; then
@@ -37,6 +38,4 @@ for dir in ./*; do
 done
 
 # If the action is 'down', we need to run the action on 'traefik' last
-if [[ $action == "down" && -d "./traefik" ]]; then
-    sudo "./traefik/docker-compose.sh" $action
-fi
+[[ $action == "down" && -d "./traefik" ]] && sudo "./traefik/docker-compose.sh" $action
