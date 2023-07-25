@@ -75,7 +75,7 @@ services:
     command:
       - '--port=41234'
     container_name: whoami
-    image: traefik/whoami:v1.9
+    image: traefik/whoami:v1.10
     labels:
       - traefik.enable=true
       - traefik.http.routers.whoami-secure.entrypoints=websecure
