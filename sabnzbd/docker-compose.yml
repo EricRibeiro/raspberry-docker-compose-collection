@@ -12,7 +12,7 @@ services:
       - PGID=${PGID}
       - PUID=${PUID}
       - TZ=${TIMEZONE}
-    image: lscr.io/linuxserver/sabnzbd:4.0.3
+    image: lscr.io/linuxserver/sabnzbd:4.1.0
     labels:
       - traefik.enable=true
       - traefik.http.routers.sabnzbd-secure.entrypoints=websecure
