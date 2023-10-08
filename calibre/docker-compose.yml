@@ -14,7 +14,7 @@ services:
       - PGID=${PGID}
       - PUID=${PUID}
       - TZ=${TIMEZONE}
-    image: lscr.io/linuxserver/calibre:6.24.0
+    image: lscr.io/linuxserver/calibre:6.28.1
     labels:
       - traefik.enable=true
       - traefik.http.routers.calibre-secure.entrypoints=websecure
