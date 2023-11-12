@@ -19,6 +19,7 @@ exclude=(
   "mullvad-browser"
   "pihole"
   "renovate"
+  "watchtower"
   "whoogle"
 )
 

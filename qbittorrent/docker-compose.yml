@@ -15,7 +15,7 @@ services:
       - PUID=${PUID}
       - TZ=${TIMEZONE}
       - WEBUI_PORT=8080
-    image: lscr.io/linuxserver/qbittorrent:4.5.5
+    image: lscr.io/linuxserver/qbittorrent:latest
     labels:
       - traefik.enable=true
       - traefik.http.routers.qbittorrent-secure.entrypoints=websecure
@@ -39,7 +39,7 @@ services:
       - PGID=${PGID}
       - PUID=${PUID}
       - TZ=${TIMEZONE}
-    image: lscr.io/linuxserver/wireguard:1.0.20210914
+    image: lscr.io/linuxserver/wireguard:latest
     networks:
       - proxy
     ports:
