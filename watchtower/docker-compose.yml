@@ -7,7 +7,8 @@ services:
     environment:
       - TZ=America/Vancouver
       - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_SCHEDULE=0 0 4 * * *
+      - WATCHTOWER_SCHEDULE=0 0 4 * * 6
+      - WATCHTOWER_DEBUG=true
     image: containrrr/watchtower
     restart: unless-stopped
     volumes:
