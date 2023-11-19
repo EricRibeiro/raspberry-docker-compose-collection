@@ -1,0 +1,29 @@
+---
+version: '3'
+
+networks:
+  proxy:
+    external: true
+
+services:
+  changedetection:
+    container_name: changedetection
+    environment:
+      - HIDE_REFERER=${HIDE_REFERER}
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+    image: ghcr.io/dgtlmoon/changedetection.io:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.changedetection-secure.entrypoints=websecure
+      - traefik.http.routers.changedetection-secure.rule=Host(`changedetection.${DOMAIN}`)
+      - traefik.http.routers.changedetection-secure.service=changedetection
+      - traefik.http.routers.changedetection-secure.tls=true
+      - traefik.http.routers.changedetection-secure.tls.certresolver=cloudflare
+      - traefik.http.services.changedetection.loadbalancer.server.port=5000
+    networks:
+      - proxy
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_VOLUME}:/datastore
