@@ -1,0 +1,37 @@
+---
+version: '3'
+
+networks:
+  proxy:
+    external: true
+
+services:
+  microbin:
+    container_name: microbin
+    environment:
+      MICROBIN_DEFAULT_BURN_AFTER: ${MICROBIN_DEFAULT_BURN_AFTER}
+      MICROBIN_DEFAULT_EXPIRY: ${MICROBIN_DEFAULT_EXPIRY}
+      MICROBIN_EDITABLE: ${MICROBIN_EDITABLE}
+      MICROBIN_ENABLE_BURN_AFTER: ${MICROBIN_ENABLE_BURN_AFTER}
+      MICROBIN_ENABLE_READONLY: ${MICROBIN_ENABLE_READONLY}
+      MICROBIN_GC_DAYS: ${MICROBIN_GC_DAYS}
+      MICROBIN_HASH_IDS: ${MICROBIN_HASH_IDS}
+      MICROBIN_HIGHLIGHTSYNTAX: ${MICROBIN_HIGHLIGHTSYNTAX}
+      MICROBIN_MAX_FILE_SIZE_UNENCRYPTED_MB: ${MICROBIN_MAX_FILE_SIZE_UNENCRYPTED_MB}
+      MICROBIN_NO_FILE_UPLOAD: ${MICROBIN_NO_FILE_UPLOAD}
+      MICROBIN_PRIVATE: ${MICROBIN_PRIVATE}
+      MICROBIN_SHOW_READ_STATS: ${MICROBIN_SHOW_READ_STATS}
+    image: danielszabo99/microbin:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.microbin-secure.entrypoints=websecure
+      - traefik.http.routers.microbin-secure.rule=Host(`microbin.${DOMAIN}`)
+      - traefik.http.routers.microbin-secure.service=microbin
+      - traefik.http.routers.microbin-secure.tls=true
+      - traefik.http.routers.microbin-secure.tls.certresolver=cloudflare
+      - traefik.http.services.microbin.loadbalancer.server.port=8080
+    networks:
+      - proxy
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_VOLUME}/data:/app/microbin_data
