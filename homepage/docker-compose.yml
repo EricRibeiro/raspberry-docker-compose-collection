@@ -1,0 +1,46 @@
+---
+version: '3'
+
+networks:
+  proxy:
+    external: true
+
+services:
+  homepage:
+    container_name: homepage
+    environment:
+      - HOMEPAGE_VAR_BAZARR_API_KEY=${BAZARR_API_KEY}
+      - HOMEPAGE_VAR_CHANGEDT_API_KEY=${CHANGEDT_API_KEY}
+      - HOMEPAGE_VAR_DOMAIN=${DOMAIN}
+      - HOMEPAGE_VAR_LATITUDE=${LATITUDE}
+      - HOMEPAGE_VAR_LONGITUDE=${LONGITUDE}
+      - HOMEPAGE_VAR_PORTAINER_API_KEY=${PORTAINER_API_KEY}
+      - HOMEPAGE_VAR_PORTAINER_ENVIRONMENT=${PORTAINER_ENVIRONMENT}
+      - HOMEPAGE_VAR_PROWLARR_API_KEY=${PROWLARR_API_KEY}
+      - HOMEPAGE_VAR_QBITTORRENT_PASSWORD=${QBITTORRENT_PASSWORD}
+      - HOMEPAGE_VAR_QBITTORRENT_USERNAME=${QBITTORRENT_USERNAME}
+      - HOMEPAGE_VAR_RADARR_API_KEY=${RADARR_API_KEY}
+      - HOMEPAGE_VAR_SABNZBD_API_KEY=${SABNZBD_API_KEY}
+      - HOMEPAGE_VAR_SONARR_API_KEY=${SONARR_API_KEY}
+      - HOMEPAGE_VAR_TAUTULLI_API_KEY=${TAUTULLI_API_KEY}
+      - HOMEPAGE_VAR_TIMEZONE=${TIMEZONE}
+      - HOMEPAGE_VAR_TRAEFIK_PASSWORD=${TRAEFIK_PASSWORD}
+      - HOMEPAGE_VAR_TRAEFIK_USERNAME=${TRAEFIK_USERNAME}
+      - HOMEPAGE_VAR_PLEX_API_KEY=${PLEX_API_KEY}
+    image: ghcr.io/gethomepage/homepage:v0.8.3
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homepage-secure.entrypoints=websecure
+      - traefik.http.routers.homepage-secure.rule=Host(`homepage.${DOMAIN}`)
+      - traefik.http.routers.homepage-secure.service=homepage
+      - traefik.http.routers.homepage-secure.tls=true
+      - traefik.http.routers.homepage-secure.tls.certresolver=cloudflare
+      - traefik.http.services.homepage.loadbalancer.server.port=3000
+    networks:
+      - proxy
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${DOCKER_VOLUME}/config:/app/config:rw
+      - ${DOCKER_VOLUME}/icons:/app/public/icons:ro
+      - ${DOCKER_VOLUME}/images:/app/public/images:ro

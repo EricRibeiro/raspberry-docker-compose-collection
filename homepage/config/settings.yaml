@@ -1,0 +1,35 @@
+---
+background: https://512pixels.net/wp-content/uploads/2020/06/11-0-Night-thumbnail-768x768.jpg
+base: https://homepage.{{HOMEPAGE_VAR_DOMAIN}}/
+cardBlur: md
+headerStyle: boxed
+hideErrors: false
+instanceName: homepage
+language: en-CA
+layout:
+  Pinned:
+    columns: 3
+    header: true
+    style: row
+    icon: mdi-pin
+  Content Management:
+    columns: 2
+    header: true
+    style: row
+  Servarr:
+    columns: 2
+    header: true
+    style: row
+  Miscellaneous:
+    columns: 4
+    header: true
+    style: row
+quicklaunch:
+  hideInternetSearch: true
+  hideVisitURL: true
+  searchDescriptions: false
+showStats: true
+statusStyle: dot
+target: _self
+title: Homepage
+useEqualHeights: true

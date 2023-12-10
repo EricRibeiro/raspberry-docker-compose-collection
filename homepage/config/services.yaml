@@ -1,0 +1,139 @@
+- Pinned:
+    - sonarr:
+        icon: sonarr
+        href: https://sonarr.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Series Management
+
+    - radarr:
+        icon: radarr
+        href: https://radarr.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Movie Management
+
+    - microbin:
+        icon: microbin
+        href: https://microbin.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Pastebin Service
+
+- Content Management:
+    - qbittorrent:
+        icon: qbittorrent
+        href: https://qbittorrent.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Torrent Client
+        siteMonitor: https://qbittorrent.{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
+        widget:
+            type: qbittorrent
+            url: https://qbittorrent.{{HOMEPAGE_VAR_DOMAIN}}
+            username: {{HOMEPAGE_VAR_QBITTORRENT_USERNAME}}
+            password: {{HOMEPAGE_VAR_QBITTORRENT_PASSWORD}}
+    - sabnzbd:
+        icon: sabnzbd
+        href: https://sabnzbd.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Usenet Downloader
+        siteMonitor: https://sabnzbd.{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
+        widget:
+            type: sabnzbd
+            url: https://sabnzbd.{{HOMEPAGE_VAR_DOMAIN}}
+            key: {{HOMEPAGE_VAR_SABNZBD_API_KEY}}
+    - plex:
+        icon: plex
+        href: https://plex.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Media Streaming
+        siteMonitor: https://plex.{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
+        widget:
+            type: plex
+            url: https://plex.{{HOMEPAGE_VAR_DOMAIN}}
+            key: {{HOMEPAGE_VAR_PLEX_API_KEY}}
+    - tautulli:
+        icon: tautulli
+        href: https://tautulli.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Plex Monitoring
+        server: docker-instance
+        widget:
+            type: tautulli
+            url: https://tautulli.{{HOMEPAGE_VAR_DOMAIN}}
+            key: {{HOMEPAGE_VAR_TAUTULLI_API_KEY}}
+
+- Servarr:
+    - sonarr:
+        icon: sonarr
+        href: https://sonarr.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Series Management
+        siteMonitor: https://sonarr.{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
+        widget:
+            type: sonarr
+            url: https://sonarr.{{HOMEPAGE_VAR_DOMAIN}}
+            key: {{HOMEPAGE_VAR_SONARR_API_KEY}}
+    - radarr:
+        icon: radarr
+        href: https://radarr.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Movie Management
+        siteMonitor: https://radarr.{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
+        widget:
+            type: radarr
+            url: https://radarr.{{HOMEPAGE_VAR_DOMAIN}}
+            key: {{HOMEPAGE_VAR_RADARR_API_KEY}}
+    - bazarr:
+        icon: bazarr
+        href: https://bazarr.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Subtitle Downloader
+        siteMonitor: https://bazarr.{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
+        widget:
+            type: bazarr
+            url: https://bazarr.{{HOMEPAGE_VAR_DOMAIN}}
+            key: {{HOMEPAGE_VAR_BAZARR_API_KEY}}
+    - prowlarr:
+        icon: prowlarr
+        href: https://prowlarr.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Indexer Manager
+        siteMonitor: https://prowlarr.{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
+        widget:
+            type: prowlarr
+            url: https://prowlarr.{{HOMEPAGE_VAR_DOMAIN}}
+            key: {{HOMEPAGE_VAR_PROWLARR_API_KEY}}
+
+- Miscellaneous:
+    - changedetection:
+        icon: changedetection-io
+        href: https://changedetection.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Change Monitor
+        siteMonitor: https://changedetection.{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
+        widget:
+            type: changedetectionio
+            url: https://changedetection.{{HOMEPAGE_VAR_DOMAIN}}
+            key: {{HOMEPAGE_VAR_CHANGEDT_API_KEY}}
+    - portainer:
+        icon: portainer
+        href: https://portainer.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Container Management
+        siteMonitor: https://portainer.{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
+        widget:
+            type: portainer
+            url: https://portainer.{{HOMEPAGE_VAR_DOMAIN}}
+            env: {{HOMEPAGE_VAR_PORTAINER_ENVIRONMENT}}
+            key: {{HOMEPAGE_VAR_PORTAINER_API_KEY}}
+    - traefik:
+        icon: traefik
+        href: https://{{HOMEPAGE_VAR_DOMAIN}}
+        description: Proxy Balancer
+        siteMonitor: https://{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
+        widget:
+            type: traefik
+            url: https://{{HOMEPAGE_VAR_DOMAIN}}
+            username: {{HOMEPAGE_VAR_TRAEFIK_USERNAME}}
+            password: {{HOMEPAGE_VAR_TRAEFIK_PASSWORD}}
+    - microbin:
+        icon: microbin
+        href: https://microbin.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Pastebin Service
+        siteMonitor: https://microbin.{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
