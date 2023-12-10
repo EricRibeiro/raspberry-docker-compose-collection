@@ -1,0 +1,46 @@
+version: '3'
+
+networks:
+  proxy:
+    external: true
+
+services:
+  rustdesk-server:
+    container_name: rustdesk-server
+    ports:
+      - 21115:21115
+      - 21116:21116
+      - 21116:21116/udp
+    image: rustdesk/rustdesk-server:latest
+    command: hbbs -r rustdesk-server.traefik.ca:21117 -k _
+    volumes:
+      - ${DOCKER_VOLUME}/data:/root:rw
+    networks:
+      - proxy
+    depends_on:
+      - rustdesk-relay
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.rustdesk-server.rule=Host(`rustdesk-server.${DOMAIN}`)
+      - traefik.http.routers.rustdesk-server.entrypoints=websecure
+      - traefik.http.routers.rustdesk-server.tls.certresolver=cloudflare
+      - traefik.http.services.rustdesk-server.loadbalancer.server.port=21118
+
+  rustdesk-relay:
+    container_name: rustdesk-relay
+    ports:
+      - 21117:21117
+    image: rustdesk/rustdesk-server:latest
+    command: hbbr
+    volumes:
+      - ${DOCKER_VOLUME}/data:/root:rw
+    networks:
+      - proxy
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.rustdesk-relay.rule=Host(`rustdesk-relay.${DOMAIN}`)
+      - traefik.http.routers.rustdesk-relay.entrypoints=websecure
+      - traefik.http.routers.rustdesk-relay.tls.certresolver=cloudflare
+      - traefik.http.services.rustdesk-relay.loadbalancer.server.port=21119
