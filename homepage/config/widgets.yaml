@@ -1,0 +1,12 @@
+- search:
+    provider: google # google, duckduckgo, bing, baidu, brave or custom
+    focus: false # Optional, will set focus to the search bar on page load
+    target: _blank # One of _self, _blank, _parent or _top
+
+- openmeteo:
+    cache: 5
+    label: Current
+    latitude: {{HOMEPAGE_VAR_LATITUDE}}
+    longitude: {{HOMEPAGE_VAR_LONGITUDE}}
+    timezone: {{HOMEPAGE_VAR_TIMEZONE}}
+    units: metric
