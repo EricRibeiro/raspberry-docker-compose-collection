@@ -27,7 +27,7 @@ services:
       - HOMEPAGE_VAR_TRAEFIK_PASSWORD=${TRAEFIK_PASSWORD}
       - HOMEPAGE_VAR_TRAEFIK_USERNAME=${TRAEFIK_USERNAME}
       - HOMEPAGE_VAR_PLEX_API_KEY=${PLEX_API_KEY}
-    image: ghcr.io/gethomepage/homepage:v0.8.3
+    image: ghcr.io/gethomepage/homepage:latest
     labels:
       - traefik.enable=true
       - traefik.http.routers.homepage-secure.entrypoints=websecure
