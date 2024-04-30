@@ -3,8 +3,6 @@
 # Get the absolute directory of the script itself
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 
-#!/bin/false
-
 # Public: Prepare the Docker volume directory.
 #
 # This function creates the specified Docker volume directory and its sub-directories if they don't exist.
@@ -48,8 +46,10 @@ function prepare_volume_directory {
 
     # Expand variables in the temporary files.
     # Delete files with the .example extension.
+    # Run envsubst unless the file has the .sh extension.
     for file in $(find "$temp_dir" -type f); do
       [[ "$file" == *.example ]] && { rm "$file"; continue; }
+      [[ "$file" == *.sh ]] && continue
       envsubst < "$file" > "${file}.expanded"
       mv "${file}.expanded" "$file"
     done
