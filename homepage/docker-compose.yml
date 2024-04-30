@@ -9,6 +9,7 @@ services:
   homepage:
     container_name: homepage
     environment:
+      - HOMEPAGE_VAR_AUTOBRR_API_KEY=${AUTOBRR_API_KEY}
       - HOMEPAGE_VAR_BAZARR_API_KEY=${BAZARR_API_KEY}
       - HOMEPAGE_VAR_CHANGEDT_API_KEY=${CHANGEDT_API_KEY}
       - HOMEPAGE_VAR_DOMAIN=${DOMAIN}

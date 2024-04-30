@@ -1,0 +1,29 @@
+---
+version: '3'
+
+networks:
+  proxy:
+    external: true
+
+services:
+  autobrr:
+    container_name: autobrr
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+    image: ghcr.io/autobrr/autobrr:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.autobrr-secure.entrypoints=websecure
+      - traefik.http.routers.autobrr-secure.rule=Host(`autobrr.${DOMAIN}`)
+      - traefik.http.routers.autobrr-secure.service=autobrr
+      - traefik.http.routers.autobrr-secure.tls=true
+      - traefik.http.routers.autobrr-secure.tls.certresolver=cloudflare
+      - traefik.http.services.autobrr.loadbalancer.server.port=7474
+    networks:
+      - proxy
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_VOLUME}:/config:rw
+      - ${DOCKER_SEED_VOLUME}:/seed:ro

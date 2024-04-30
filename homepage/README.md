@@ -16,6 +16,10 @@ For detailed instructions on obtaining and configuring each API key required by 
 
 This variable represents the path to the Docker volume that stores the configuration files and dependencies for the "homepage" project. Replace the placeholder value with the appropriate path on your system.
 
+### AUTOBRR_API_KEY
+
+This variable is used to set the API key for Autobrr. Replace the placeholder value with your actual Autobrr API key.
+
 #### BAZARR_API_KEY
 
 This variable is used to set the API key for Bazarr. Replace the placeholder value with your actual Bazarr API key.
