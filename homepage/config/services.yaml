@@ -77,6 +77,16 @@
             type: radarr
             url: https://radarr.{{HOMEPAGE_VAR_DOMAIN}}
             key: {{HOMEPAGE_VAR_RADARR_API_KEY}}
+    - autobrr:
+        icon: autobrr
+        href: https://autobrr.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Torrent Automation
+        siteMonitor: https://autobrr.{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
+        widget:
+            type: autobrr
+            url: https://autobrr.{{HOMEPAGE_VAR_DOMAIN}}
+            key: {{HOMEPAGE_VAR_AUTOBRR_API_KEY}}
     - bazarr:
         icon: bazarr
         href: https://bazarr.{{HOMEPAGE_VAR_DOMAIN}}
