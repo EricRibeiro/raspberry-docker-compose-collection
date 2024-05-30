@@ -109,6 +109,18 @@
             key: {{HOMEPAGE_VAR_PROWLARR_API_KEY}}
 
 - Miscellaneous:
+    - calibre:
+        icon: calibre
+        href: https://calibre.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Books Management
+        siteMonitor: https://calibre.{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
+    - microbin:
+        icon: microbin
+        href: https://microbin.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Pastebin Service
+        siteMonitor: https://microbin.{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
     - changedetection:
         icon: changedetection-io
         href: https://changedetection.{{HOMEPAGE_VAR_DOMAIN}}
@@ -141,9 +153,3 @@
             url: https://{{HOMEPAGE_VAR_DOMAIN}}
             username: {{HOMEPAGE_VAR_TRAEFIK_USERNAME}}
             password: {{HOMEPAGE_VAR_TRAEFIK_PASSWORD}}
-    - microbin:
-        icon: microbin
-        href: https://microbin.{{HOMEPAGE_VAR_DOMAIN}}
-        description: Pastebin Service
-        siteMonitor: https://microbin.{{HOMEPAGE_VAR_DOMAIN}}/
-        server: docker-instance
