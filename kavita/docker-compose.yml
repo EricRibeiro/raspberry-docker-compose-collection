@@ -1,0 +1,55 @@
+networks:
+  proxy:
+    external: true
+
+services:
+  kavita:
+    container_name: kavita
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+    image: lscr.io/linuxserver/kavita:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.kavita-secure.entrypoints=websecure
+      - traefik.http.routers.kavita-secure.rule=Host(`kavita.${DOMAIN}`)
+      - traefik.http.routers.kavita-secure.service=kavita
+      - traefik.http.routers.kavita-secure.tls=true
+      - traefik.http.routers.kavita-secure.tls.certresolver=cloudflare
+      - traefik.http.services.kavita.loadbalancer.server.port=5000
+    networks:
+      - proxy
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_COMICS_VOLUME}/:/comics:rw
+      - ${DOCKER_MANGA_VOLUME}/:/manga:rw
+      - ${DOCKER_VOLUME}/:/config:rw
+
+  komf:
+    container_name: komf
+    depends_on:
+      - kavita
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC -XX:ShenandoahGCHeuristics=compact -XX:ShenandoahGuaranteedGCInterval=3600000 -XX:TrimNativeHeapInterval=3600000
+      - KOMF_KAVITA_API_KEY=${KAVITA_API_KEY}
+      - KOMF_KAVITA_BASE_URI=https://kavita.${DOMAIN}
+      - KOMF_LOG_LEVEL=INFO
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TIMEZONE}
+      - KOMF_METADATA_PROVIDERS_MAL_CLIENT_ID=${MYANIMELIST_CLIENT_ID}
+    image: sndxr/komf:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.komf-secure.entrypoints=websecure
+      - traefik.http.routers.komf-secure.rule=Host(`komf.${DOMAIN}`)
+      - traefik.http.routers.komf-secure.service=komf
+      - traefik.http.routers.komf-secure.tls=true
+      - traefik.http.routers.komf-secure.tls.certresolver=cloudflare
+      - traefik.http.services.komf.loadbalancer.server.port=8085
+    networks:
+      - proxy
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_VOLUME}/komf:/config:rw
