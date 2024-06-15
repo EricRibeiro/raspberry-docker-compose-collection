@@ -131,6 +131,17 @@
             type: changedetectionio
             url: https://changedetection.{{HOMEPAGE_VAR_DOMAIN}}
             key: {{HOMEPAGE_VAR_CHANGEDT_API_KEY}}
+    - kavita:
+        icon: kavita
+        href: https://kavita.{{HOMEPAGE_VAR_DOMAIN}}
+        description: Manga Management
+        siteMonitor: https://kavita.{{HOMEPAGE_VAR_DOMAIN}}/
+        server: docker-instance
+        widget:
+            type: kavita
+            url: https://kavita.{{HOMEPAGE_VAR_DOMAIN}}
+            username: {{HOMEPAGE_VAR_KAVITA_USERNAME}}
+            password: {{HOMEPAGE_VAR_KAVITA_PASSWORD}}
     - portainer:
         icon: portainer
         href: https://portainer.{{HOMEPAGE_VAR_DOMAIN}}
