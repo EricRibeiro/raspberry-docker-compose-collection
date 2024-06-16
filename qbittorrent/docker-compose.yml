@@ -27,8 +27,9 @@ services:
     network_mode: service:wireguard
     restart: unless-stopped
     volumes:
-      - ${DOCKER_VOLUME}/:/config:rw
       - ${DOCKER_DATA_VOLUME}:/data/torrents:rw
+      - ${DOCKER_SEED_VOLUME}:/data/seed:rw
+      - ${DOCKER_VOLUME}/:/config:rw
 
   wireguard:
     cap_add:

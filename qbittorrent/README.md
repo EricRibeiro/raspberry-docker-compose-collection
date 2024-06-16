@@ -75,6 +75,10 @@ This variable represents the path to the Docker volume that stores the configura
 
 This variable determines where the downloads will be stored. Before deciding on its value, read TRaSH's [Docker setup guide](https://trash-guides.info/Hardlinks/How-to-setup-for/Docker/) and Servarr's [Docker guide](https://wiki.servarr.com/docker-guide).
 
+#### DOCKER_SEED_VOLUME
+
+This variable dictates where torrents with the `seed` category will be stored. This is its own variable to allow for different storage locations for seeding torrents.
+
 ##### External SSD
 
 I am testing this setup with an external SSD connected to a Raspberry Pi 4 and mounted in the OS. The following line in `/etc/fstab` mounts the SSD: `UUID=device_uuid /mount_directory auto nosuid,nodev,nofail,uid=1000,gid=1000 0 0`. This line requires the device UUID and user/group IDs, which are explained in more detail below.
