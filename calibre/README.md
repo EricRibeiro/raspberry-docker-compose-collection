@@ -22,6 +22,10 @@ This variable sets the HTTP Basic authentication username for the Calibre contai
 
 This variable represents the path to the Docker volume that stores the configuration files and dependencies for the project. Replace the placeholder value with the appropriate path on your system.
 
-#### DOCKER_DATA_VOLUME
+#### DOCKER_SOURCE_BOOKS_VOLUME
 
 This variable determines where the host machine's books are stored. Replace the placeholder value with the path to your e-book collection on your host system. This path will be mapped to `/books` in the container so that books can be added to Calibre easily.
+
+#### DOCKER_CALIBRE_LIBRARY_VOLUME
+
+This variable represents the path to the Docker volume that stores the Calibre library. This is where your books will be stored and managed by Calibre. Replace the placeholder value with the appropriate path on your system.

@@ -1,5 +1,4 @@
 ---
-version: '3'
 
 networks:
   proxy:
@@ -30,4 +29,5 @@ services:
       - seccomp:unconfined
     volumes:
       - ${DOCKER_VOLUME}/:/config:rw
-      - ${DOCKER_DATA_VOLUME}/:/books:rw
+      - ${DOCKER_CALIBRE_LIBRARY_VOLUME}/:/library:rw
+      - ${DOCKER_SOURCE_BOOKS_VOLUME}/:/books:rw
