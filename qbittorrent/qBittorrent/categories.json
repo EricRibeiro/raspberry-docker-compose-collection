@@ -1,14 +1,17 @@
 {
     "anime": {
-        "save_path": "anime"
+        "save_path": "torrents/anime"
     },
     "books": {
-        "save_path": "books"
+        "save_path": "torrents/books"
     },
     "movies": {
-        "save_path": "movies"
+        "save_path": "torrents/movies"
+    },
+    "seed": {
+        "save_path": "seed"
     },
     "tv": {
-        "save_path": "tv"
+        "save_path": "torrents/tv"
     }
 }
